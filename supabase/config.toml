@@ -1,0 +1,13 @@
+project_id = "oxvkxbygniwgcahmmeea"
+
+[functions.send-password-reset-email]
+verify_jwt = false
+
+[functions.send-order-emails]
+verify_jwt = false
+
+[functions.zoho-exchange-grant]
+verify_jwt = false
+
+[functions.chat]
+verify_jwt = false

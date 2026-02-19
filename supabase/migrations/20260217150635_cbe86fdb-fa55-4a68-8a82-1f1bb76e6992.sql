@@ -1,0 +1,1 @@
+ALTER TABLE public.banners ADD COLUMN button_text text DEFAULT 'Shop Now';
