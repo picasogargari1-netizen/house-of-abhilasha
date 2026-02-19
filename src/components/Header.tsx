@@ -171,7 +171,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
           </div>
 
           {/* Mobile Header */}
-          <div className="md:hidden flex items-center justify-between h-14">
+          <div className="md:hidden flex items-center justify-between h-12 sm:h-14">
             <Button
               variant="ghost"
               size="icon"
@@ -181,7 +181,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
               {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
             <h1
-              className="text-lg font-serif font-bold text-foreground cursor-pointer absolute left-1/2 -translate-x-1/2 brand-name"
+              className="text-base sm:text-lg font-serif font-bold text-foreground cursor-pointer absolute left-1/2 -translate-x-1/2 brand-name whitespace-nowrap"
               onClick={() => onNavigate("home")}
             >
               House of Abhilasha
@@ -242,18 +242,15 @@ const Header = ({ onNavigate }: HeaderProps) => {
               </div>
 
               <div className="border-t border-border pt-4 space-y-3">
-                <Link to="/all-products" onClick={() => setIsMobileMenuOpen(false)} className="block text-foreground hover:text-primary transition-colors text-sm font-medium">
-                  Collection
-                </Link>
-                <Link to="/jewellery" onClick={() => setIsMobileMenuOpen(false)} className="block text-foreground hover:text-primary transition-colors text-sm font-medium">
-                  Jewellery
-                </Link>
-                <button onClick={() => { onNavigate("about"); setIsMobileMenuOpen(false); }} className="block text-foreground hover:text-primary transition-colors w-full text-left text-sm">
+                <button onClick={() => { onNavigate("about"); setIsMobileMenuOpen(false); }} className="block text-foreground hover:text-primary transition-colors w-full text-left text-sm font-medium">
                   About Us
                 </button>
                 <button onClick={() => { onNavigate("contact"); setIsMobileMenuOpen(false); }} className="block text-foreground hover:text-primary transition-colors w-full text-left text-sm">
                   Contact
                 </button>
+                <Link to="/blogs" onClick={() => setIsMobileMenuOpen(false)} className="block text-foreground hover:text-primary transition-colors text-sm">
+                  Blogs
+                </Link>
               </div>
             </nav>
           </div>

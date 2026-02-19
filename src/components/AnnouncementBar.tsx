@@ -36,21 +36,21 @@ const AnnouncementBar = () => {
   if (messages.length === 0) return null;
 
   return (
-    <div className="bg-[hsl(35,30%,25%)] text-[hsl(40,30%,90%)] text-center py-2.5 text-xs relative flex items-center justify-center tracking-wider">
+    <div className="bg-[hsl(35,30%,25%)] text-[hsl(40,30%,90%)] text-center py-2 sm:py-2.5 text-[10px] sm:text-xs relative flex items-center justify-center tracking-wider">
       <button
         onClick={() => setCurrent((prev) => (prev - 1 + messages.length) % messages.length)}
-        className="absolute left-4 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100 transition-opacity"
+        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100 transition-opacity"
         aria-label="Previous announcement"
       >
-        <ChevronLeft className="h-3.5 w-3.5" />
+        <ChevronLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
       </button>
-      <p className="px-10">{messages[current]}</p>
+      <p className="px-8 sm:px-10 line-clamp-1 sm:line-clamp-none">{messages[current]}</p>
       <button
         onClick={() => setCurrent((prev) => (prev + 1) % messages.length)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100 transition-opacity"
+        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 opacity-60 hover:opacity-100 transition-opacity"
         aria-label="Next announcement"
       >
-        <ChevronRight className="h-3.5 w-3.5" />
+        <ChevronRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
       </button>
     </div>
   );

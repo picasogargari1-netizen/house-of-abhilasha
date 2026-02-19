@@ -106,19 +106,19 @@ const PromoBanner = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <a
                 href="https://maps.google.com/maps?q=8-C+Ramanath+Majumder+Street+Kolkata+700009"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors w-fit"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 sm:px-6 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-medium hover:bg-primary/90 transition-colors w-full sm:w-fit"
               >
                 <MapPin className="h-4 w-4" />
                 Get Directions
               </a>
               <button
                 onClick={() => setShowForm(!showForm)}
-                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors w-fit"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-5 sm:px-6 py-2 sm:py-2.5 rounded-md text-xs sm:text-sm font-medium hover:bg-primary/90 transition-colors w-full sm:w-fit"
               >
                 <CalendarDays className="h-4 w-4" />
                 Schedule a Visit

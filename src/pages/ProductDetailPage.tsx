@@ -276,13 +276,13 @@ const ProductDetailPage = () => {
                   <TabsList className="w-full justify-start bg-transparent border-b border-border rounded-none h-auto p-0 gap-0">
                     <TabsTrigger
                       value="description"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs uppercase tracking-[0.15em] font-medium px-6 py-3 text-muted-foreground data-[state=active]:text-foreground"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] font-medium px-3 sm:px-6 py-2.5 sm:py-3 text-muted-foreground data-[state=active]:text-foreground"
                     >
                       Description
                     </TabsTrigger>
                     <TabsTrigger
                       value="order-details"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none text-xs uppercase tracking-[0.15em] font-medium px-6 py-3 text-muted-foreground data-[state=active]:text-foreground"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none text-[10px] sm:text-xs uppercase tracking-[0.1em] sm:tracking-[0.15em] font-medium px-3 sm:px-6 py-2.5 sm:py-3 text-muted-foreground data-[state=active]:text-foreground"
                     >
                       Order Details
                     </TabsTrigger>

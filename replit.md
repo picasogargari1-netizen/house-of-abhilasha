@@ -113,6 +113,12 @@ House of Abhilasha is an e-commerce platform for ethnic Indian clothing and jewe
 - **RLS Policies**: Apply `supabase/migrations/rls_policies.sql` in Supabase SQL editor
 
 ## Recent Changes
+- **2026-02-19**: Mobile responsiveness improvements
+  - Hero banner uses portrait aspect ratio (4:5) on mobile for better display
+  - Mobile hamburger menu shows only Shop categories, About Us, Contact, and Blogs (removed duplicate Collection/Jewellery)
+  - Smaller brand name and header height on small screens
+  - Better mobile sizing for announcement bar, promo banner buttons, product detail tabs, brand story, contact section, and footer
+  - Announcement bar text truncated on mobile to prevent overflow
 - **2026-02-19**: Migrated from Express.js + Drizzle to Supabase-only architecture
   - Removed Express server, Drizzle ORM, and all backend dependencies
   - Created `guest-checkout` Edge Function (user creation, order processing, Zoho emails)

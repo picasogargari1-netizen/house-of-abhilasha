@@ -3,12 +3,12 @@ import aboutImage from "@/assets/about-image.jpg";
 const BrandStory = () => {
   return (
     <section
-      className="relative py-16 md:py-20 bg-cover bg-center bg-no-repeat min-h-[500px] md:min-h-[600px] flex items-center"
+      className="relative py-10 sm:py-16 md:py-20 bg-cover bg-center bg-no-repeat min-h-[400px] sm:min-h-[500px] md:min-h-[600px] flex items-center"
       style={{ backgroundImage: `url(${aboutImage})` }}
     >
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-lg">
-          <div className="bg-background/85 rounded-lg p-6 md:p-10">
+        <div className="max-w-sm sm:max-w-lg">
+          <div className="bg-background/90 sm:bg-background/85 rounded-lg p-5 sm:p-6 md:p-10">
             <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium mb-4">
               Our Story
             </p>
@@ -24,7 +24,7 @@ const BrandStory = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-6 mt-10 pt-8 border-t border-border">
+            <div className="grid grid-cols-3 gap-3 sm:gap-6 mt-6 sm:mt-10 pt-6 sm:pt-8 border-t border-border">
               <div>
                 <p className="text-xl md:text-2xl font-bold text-primary font-serif">500+</p>
                 <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Happy Customers</p>

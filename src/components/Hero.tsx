@@ -53,14 +53,14 @@ const Hero = () => {
   if (isLoading || slides.length === 0) {
     return (
       <section className="relative w-full">
-        <div className="w-full aspect-[16/9] md:aspect-[16/7] bg-muted animate-pulse" />
+        <div className="w-full aspect-[4/5] sm:aspect-[16/9] md:aspect-[16/7] bg-muted animate-pulse" />
       </section>
     );
   }
 
   return (
     <section className="relative w-full overflow-hidden group">
-      <div className="relative w-full aspect-[16/9] md:aspect-[16/7]">
+      <div className="relative w-full aspect-[4/5] sm:aspect-[16/9] md:aspect-[16/7]">
         {slides.map((slide, index) => (
           <div
             key={index}
@@ -73,11 +73,10 @@ const Hero = () => {
               alt={slide.buttonText}
               className="w-full h-full object-cover"
             />
-            {/* Bottom-center Shop Now button */}
-            <div className="absolute bottom-10 md:bottom-14 left-1/2 -translate-x-1/2">
+            <div className="absolute bottom-6 sm:bottom-10 md:bottom-14 left-1/2 -translate-x-1/2">
               <button
                 onClick={() => navigate(slide.link)}
-                className="bg-background/90 text-foreground px-10 py-3 text-xs uppercase tracking-[0.2em] font-medium hover:bg-background transition-colors border border-border"
+                className="bg-background/90 text-foreground px-6 sm:px-10 py-2.5 sm:py-3 text-[10px] sm:text-xs uppercase tracking-[0.2em] font-medium hover:bg-background transition-colors border border-border whitespace-nowrap"
               >
                 {slide.buttonText}
               </button>

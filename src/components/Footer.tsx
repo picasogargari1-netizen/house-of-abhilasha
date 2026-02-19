@@ -79,8 +79,8 @@ const Footer = ({ onNavigate }: FooterProps) => {
           </div>
 
           {/* Company */}
-          <div className="lg:-mt-3">
-            <h4 className="text-sm uppercase tracking-wider font-semibold mb-3">Company</h4>
+          <div>
+            <h4 className="text-sm uppercase tracking-wider font-semibold mb-6">Company</h4>
             <ul className="space-y-3">
               <li>
                 <button

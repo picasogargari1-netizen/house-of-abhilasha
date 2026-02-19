@@ -45,11 +45,11 @@ const ContactSection = () => {
   return (
     <section
       id="contact"
-      className="py-12 sm:py-16 relative bg-contain bg-center bg-no-repeat min-h-[400px] sm:min-h-[500px] flex items-end"
+      className="py-10 sm:py-16 relative bg-contain bg-center bg-no-repeat min-h-[380px] sm:min-h-[500px] flex items-end"
       style={{ backgroundImage: `url(${contactBg})` }}
     >
-      <div className="container mx-auto px-4 sm:px-6 relative z-10 pb-4">
-        <div className="max-w-[320px] sm:max-w-sm">
+      <div className="container mx-auto px-3 sm:px-6 relative z-10 pb-4">
+        <div className="max-w-[300px] sm:max-w-sm">
           <div className="bg-background/85 rounded-lg p-5 sm:p-6">
             <h2 className="text-xl sm:text-2xl font-serif font-bold text-foreground mb-2">
               Get In Touch
