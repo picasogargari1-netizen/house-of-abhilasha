@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CartProvider } from "@/contexts/CartContext";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +11,6 @@ import Index from "./pages/Index";
 import ScrollToTop from "./components/ScrollToTop";
 
 const CategoryPage = lazy(() => import("./pages/CategoryPage"));
-const JewelleryPage = lazy(() => import("./pages/JewelleryPage"));
 const AllProductsPage = lazy(() => import("./pages/AllProductsPage"));
 const ProductDetailPage = lazy(() => import("./pages/ProductDetailPage"));
 const AuthPage = lazy(() => import("./pages/AuthPage"));
@@ -56,7 +55,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/all-products" element={<AllProductsPage />} />
                 <Route path="/category/:category" element={<CategoryPage />} />
-                <Route path="/jewellery" element={<JewelleryPage />} />
+                <Route path="/jewellery" element={<Navigate to="/category/jewellery" replace />} />
                 <Route path="/product/:id" element={<ProductDetailPage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/forgot-password" element={<ForgotPasswordPage />} />

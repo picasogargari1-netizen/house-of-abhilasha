@@ -1,11 +1,25 @@
 import { Link } from "react-router-dom";
 import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 interface FooterProps {
   onNavigate: (section: string) => void;
 }
 
 const Footer = ({ onNavigate }: FooterProps) => {
+  const { data: categories } = useQuery({
+    queryKey: ["footerCategories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("product_categories")
+        .select("name, slug")
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
   return (
     <footer className="bg-foreground text-background">
       {/* Main Footer */}
@@ -45,36 +59,16 @@ const Footer = ({ onNavigate }: FooterProps) => {
           <div>
             <h4 className="text-sm uppercase tracking-wider font-semibold mb-6">Categories</h4>
             <ul className="space-y-3">
-              <li>
-                <Link to="/category/co-ords" className="text-background/70 hover:text-background transition-colors text-sm">
-                  Co-Ords
-                </Link>
-              </li>
-              <li>
-                <Link to="/category/unisex-shirts" className="text-background/70 hover:text-background transition-colors text-sm">
-                  Unisex Shirts
-                </Link>
-              </li>
-              <li>
-                <Link to="/category/dresses" className="text-background/70 hover:text-background transition-colors text-sm">
-                  Dresses
-                </Link>
-              </li>
-              <li>
-                <Link to="/category/kurtis" className="text-background/70 hover:text-background transition-colors text-sm">
-                  Kurtis
-                </Link>
-              </li>
-              <li>
-                <Link to="/category/sarees" className="text-background/70 hover:text-background transition-colors text-sm">
-                  Sarees
-                </Link>
-              </li>
-              <li>
-                <Link to="/jewellery" className="text-background/70 hover:text-background transition-colors text-sm">
-                  Jewellery
-                </Link>
-              </li>
+              {(categories || []).map((cat) => (
+                <li key={cat.slug}>
+                  <Link
+                    to={`/category/${cat.slug}`}
+                    className="text-background/70 hover:text-background transition-colors text-sm"
+                  >
+                    {cat.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
