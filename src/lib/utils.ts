@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || "https://oxvkxbygniwgcahmmeea.supabase.co";
+const SUPABASE_URL = "https://oxvkxbygniwgcahmmeea.supabase.co";
 
 export function proxyImageUrl(url: string): string {
   if (!url || !import.meta.env.DEV) return url;
