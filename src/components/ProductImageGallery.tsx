@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import { cn } from "@/lib/utils";
+import { cn, proxyImageUrl } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface ProductImageGalleryProps {
@@ -71,7 +71,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
               )}
             >
               <img
-                src={image}
+                src={proxyImageUrl(image)}
                 alt={`${productName} - Thumbnail ${index + 1}`}
                 className="w-full h-full object-cover"
               />
@@ -90,7 +90,7 @@ const ProductImageGallery = ({ images, productName }: ProductImageGalleryProps) 
           onTouchEnd={handleTouchEnd}
         >
           <img
-            src={validImages[selectedIndex]}
+            src={proxyImageUrl(validImages[selectedIndex])}
             alt={`${productName} - Image ${selectedIndex + 1}`}
             className="w-full h-full object-cover sm:hover:scale-110 transition-transform duration-500"
             draggable={false}

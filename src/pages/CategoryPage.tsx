@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useProductsByCategory } from "@/hooks/useProducts";
+import { proxyImageUrl } from "@/lib/utils";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
@@ -324,7 +325,7 @@ const CategoryPage = () => {
                     {/* Image Container */}
                     <div className="relative aspect-[3/4] overflow-hidden">
                       <img
-                        src={product.image}
+                        src={proxyImageUrl(product.image)}
                         alt={product.name}
                         loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

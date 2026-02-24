@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { proxyImageUrl } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -82,7 +83,7 @@ const BlogDetailPage = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {images.map((url, i) => (
                     <div key={i} className="aspect-[4/3] overflow-hidden rounded-lg bg-muted">
-                      <img src={url} alt={`${blog.title} - image ${i + 1}`} className="w-full h-full object-cover" />
+                      <img src={proxyImageUrl(url)} alt={`${blog.title} - image ${i + 1}`} className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>

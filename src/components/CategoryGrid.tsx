@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { proxyImageUrl } from "@/lib/utils";
 
 const CategoryGrid = () => {
   const { data: categories, isLoading } = useQuery({
@@ -68,7 +69,7 @@ const CategoryGrid = () => {
               <div className="w-[72px] h-[72px] sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full overflow-hidden border border-border group-hover:border-primary transition-all duration-300 group-hover:shadow-md">
                 {cat.image_url ? (
                   <img
-                    src={cat.image_url}
+                    src={proxyImageUrl(cat.image_url)}
                     alt={cat.name}
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"

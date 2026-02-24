@@ -4,6 +4,7 @@ import { useCart } from "@/contexts/CartContext";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingBag, Eye } from "lucide-react";
+import { proxyImageUrl } from "@/lib/utils";
 
 const convertGoogleDriveUrl = (url: string): string => {
   if (!url) return "";
@@ -93,7 +94,7 @@ const BestSellers = () => {
             >
               <div className="relative aspect-[5/7] overflow-hidden bg-muted">
                 <img
-                  src={product.image}
+                  src={proxyImageUrl(product.image)}
                   alt={product.name}
                   loading="lazy"
                   className="w-full h-full object-cover"

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Eye, MessageCircle, ShoppingCart } from "lucide-react";
+import { proxyImageUrl } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
@@ -62,7 +63,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Image Container */}
         <div className="relative aspect-[3/4] overflow-hidden">
           <img
-            src={product.image}
+            src={proxyImageUrl(product.image)}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
@@ -125,7 +126,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </DialogHeader>
           <div className="grid md:grid-cols-2 gap-6">
             <img
-              src={product.image}
+              src={proxyImageUrl(product.image)}
               alt={product.name}
               className="w-full aspect-square object-cover rounded-lg"
             />

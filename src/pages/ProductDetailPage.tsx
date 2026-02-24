@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { useProduct, useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
+import { proxyImageUrl } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -330,7 +331,7 @@ const ProductDetailPage = () => {
                       >
                         <div className="aspect-[3/4] overflow-hidden bg-muted">
                           <img
-                            src={p.image}
+                            src={proxyImageUrl(p.image)}
                             alt={p.name}
                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                           />

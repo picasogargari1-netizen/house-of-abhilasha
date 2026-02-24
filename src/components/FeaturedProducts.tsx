@@ -3,6 +3,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShoppingBag, Eye } from "lucide-react";
+import { proxyImageUrl } from "@/lib/utils";
 
 const FeaturedProducts = () => {
   const { data: products, isLoading } = useProducts();
@@ -59,7 +60,7 @@ const FeaturedProducts = () => {
             >
               <div className="relative aspect-[5/7] overflow-hidden bg-muted">
                 <img
-                  src={product.image}
+                  src={proxyImageUrl(product.image)}
                   alt={product.name}
                   loading="lazy"
                   className="w-full h-full object-cover"

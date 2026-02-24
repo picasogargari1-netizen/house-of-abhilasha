@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { proxyImageUrl } from "@/lib/utils";
 
 const MostLovedCategories = () => {
   const { data: categories, isLoading } = useQuery({
@@ -68,7 +69,7 @@ const MostLovedCategories = () => {
               <div className="aspect-[3/4] overflow-hidden bg-muted">
                 {cat.image_url ? (
                   <img
-                    src={cat.image_url}
+                    src={proxyImageUrl(cat.image_url)}
                     alt={cat.name}
                     loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

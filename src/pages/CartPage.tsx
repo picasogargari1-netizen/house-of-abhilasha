@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { proxyImageUrl } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -115,7 +116,7 @@ const CartPage = () => {
                         <div className="w-16 h-16 sm:w-20 sm:h-20 flex-shrink-0">
                           {item.product_image ? (
                             <img
-                              src={item.product_image}
+                              src={proxyImageUrl(item.product_image)}
                               alt={item.product_name}
                               className="w-full h-full object-cover rounded"
                             />

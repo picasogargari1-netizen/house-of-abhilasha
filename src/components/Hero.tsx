@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { proxyImageUrl } from "@/lib/utils";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -69,7 +70,7 @@ const Hero = () => {
             }`}
           >
             <img
-              src={slide.image}
+              src={proxyImageUrl(slide.image)}
               alt={slide.buttonText}
               className="w-full h-full object-cover"
             />

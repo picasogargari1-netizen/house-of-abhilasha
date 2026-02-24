@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { proxyImageUrl } from "@/lib/utils";
 
 const convertGoogleDriveUrl = (url: string): string => {
   if (!url) return "";
@@ -70,7 +71,7 @@ const ProductOfTheDay = () => {
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center max-w-4xl mx-auto">
           <div className="aspect-square overflow-hidden bg-muted">
             <img
-              src={product.image}
+              src={proxyImageUrl(product.image)}
               alt={product.name}
               loading="lazy"
               className="w-full h-full object-cover"

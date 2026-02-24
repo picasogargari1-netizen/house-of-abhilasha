@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { proxyImageUrl } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -67,7 +68,7 @@ const BlogsPage = () => {
                   {firstImage ? (
                     <div className="aspect-[16/10] overflow-hidden bg-muted">
                       <img
-                        src={firstImage}
+                        src={proxyImageUrl(firstImage)}
                         alt={blog.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />

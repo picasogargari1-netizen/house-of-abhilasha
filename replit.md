@@ -113,6 +113,13 @@ House of Abhilasha is an e-commerce platform for ethnic Indian clothing and jewe
 - **RLS Policies**: Apply `supabase/migrations/rls_policies.sql` in Supabase SQL editor
 
 ## Recent Changes
+- **2026-02-24**: Vite proxy for Supabase in Replit environment
+  - Removed outdated `.env` file with wrong Supabase credentials
+  - Added Vite dev server proxy rules for `/supabase-proxy` (API) and `/supabase-storage` (images)
+  - Custom fetch in `src/integrations/supabase/client.ts` routes API calls through proxy in dev mode
+  - Created `proxyImageUrl()` utility in `src/lib/utils.ts` for image URL rewriting
+  - Updated all image-displaying components and pages to use `proxyImageUrl()` for Supabase storage images
+  - Solves Replit iframe/proxy blocking of direct browser-to-Supabase requests
 - **2026-02-19**: Mobile responsiveness improvements
   - Hero banner uses portrait aspect ratio (4:5) on mobile for better display
   - Mobile hamburger menu shows only Shop categories, About Us, Contact, and Blogs (removed duplicate Collection/Jewellery)
