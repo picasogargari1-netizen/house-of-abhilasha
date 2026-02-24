@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAdminProducts, useCreateProduct, useDeleteProduct, useUpdateProduct } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
+import { proxyImageUrl } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -308,7 +309,7 @@ const AdminProductsTab = () => {
                 <p className="text-xs text-muted-foreground">Image {i + 1}</p>
                 {hasImage ? (
                   <div className="relative">
-                    <img src={preview || currentUrl} alt={`Image ${i + 1}`} className="w-full h-28 object-cover rounded-md border" />
+                    <img src={preview || proxyImageUrl(currentUrl)} alt={`Image ${i + 1}`} className="w-full h-28 object-cover rounded-md border" />
                     <Button
                       type="button"
                       variant="destructive"
@@ -482,7 +483,7 @@ const AdminProductsTab = () => {
                     <TableRow key={product.id}>
                       <TableCell>
                         {product.image_url1 ? (
-                          <img src={product.image_url1} alt={product.name} className="w-12 h-12 object-cover rounded" />
+                          <img src={proxyImageUrl(product.image_url1)} alt={product.name} className="w-12 h-12 object-cover rounded" />
                         ) : (
                           <div className="w-12 h-12 bg-muted rounded flex items-center justify-center text-xs">No img</div>
                         )}

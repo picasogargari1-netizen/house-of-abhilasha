@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AdminAnnouncementsSection from "./AdminAnnouncementsSection";
 import { supabase } from "@/integrations/supabase/client";
+import { proxyImageUrl } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -246,7 +247,7 @@ const AdminBannersTab = () => {
             <div className="space-y-2">
               <Label>Current Image</Label>
               {editingBanner && (
-                <img src={editPreviewUrl || editingBanner.image_url} alt="Banner" className="w-full h-28 object-cover rounded-md border" />
+                <img src={editPreviewUrl || proxyImageUrl(editingBanner.image_url)} alt="Banner" className="w-full h-28 object-cover rounded-md border" />
               )}
               <Label className="text-sm text-muted-foreground">Replace Image (optional)</Label>
               <Input type="file" accept="image/*" onChange={handleEditFileSelect} />
@@ -289,7 +290,7 @@ const AdminBannersTab = () => {
                     <GripVertical className="h-5 w-5" />
                     <span className="ml-1 text-sm font-medium">#{index + 1}</span>
                   </div>
-                  <img src={banner.image_url} alt={banner.title || "Banner"} className="w-32 h-20 object-cover rounded" />
+                  <img src={proxyImageUrl(banner.image_url)} alt={banner.title || "Banner"} className="w-32 h-20 object-cover rounded" />
                   <div className="flex-1 min-w-0">
                     <p className="font-medium truncate">{banner.title || "Untitled Banner"}</p>
                     {banner.link && <p className="text-sm text-muted-foreground truncate">{banner.link}</p>}

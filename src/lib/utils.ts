@@ -8,9 +8,15 @@ export function cn(...inputs: ClassValue[]) {
 const SUPABASE_URL = "https://oxvkxbygniwgcahmmeea.supabase.co";
 
 export function proxyImageUrl(url: string): string {
-  if (!url || !import.meta.env.DEV) return url;
+  if (!url) return url;
+  if (import.meta.env.DEV) {
+    if (url.startsWith(SUPABASE_URL + "/storage/")) {
+      return url.replace(SUPABASE_URL + "/storage", "/supabase-storage");
+    }
+    return url;
+  }
   if (url.startsWith(SUPABASE_URL + "/storage/")) {
-    return url.replace(SUPABASE_URL + "/storage", "/supabase-storage");
+    return url.replace(SUPABASE_URL, "/sb");
   }
   return url;
 }

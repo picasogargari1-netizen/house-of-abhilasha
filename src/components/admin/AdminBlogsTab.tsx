@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { proxyImageUrl } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -228,7 +229,7 @@ const AdminBlogsTab = () => {
           <div key={i} className="relative">
             {displayUrl ? (
               <div className="relative aspect-square rounded-md overflow-hidden border">
-                <img src={displayUrl} alt={`Image ${i + 1}`} className="w-full h-full object-cover" />
+                <img src={preview ? displayUrl : proxyImageUrl(displayUrl)} alt={`Image ${i + 1}`} className="w-full h-full object-cover" />
                 <button
                   type="button"
                   onClick={() => removeImage(i, isEdit)}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { proxyImageUrl } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -134,7 +135,7 @@ const AdminCategoryImagesTab = () => {
             <div className="space-y-2">
               <Label>Current Image</Label>
               {editingCategory?.image_url ? (
-                <img src={previewUrl || editingCategory.image_url} alt={editingCategory.category_name} className="w-full h-48 object-cover rounded-md border" />
+                <img src={previewUrl || proxyImageUrl(editingCategory.image_url)} alt={editingCategory.category_name} className="w-full h-48 object-cover rounded-md border" />
               ) : previewUrl ? (
                 <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover rounded-md border" />
               ) : (
@@ -168,7 +169,7 @@ const AdminCategoryImagesTab = () => {
             {categories?.map((cat: any) => (
               <div key={cat.id} className="border rounded-lg overflow-hidden">
                 {cat.image_url ? (
-                  <img src={cat.image_url} alt={cat.category_name} className="w-full h-48 object-cover" />
+                  <img src={proxyImageUrl(cat.image_url)} alt={cat.category_name} className="w-full h-48 object-cover" />
                 ) : (
                   <div className="w-full h-48 bg-muted flex items-center justify-center">
                     <ImageIcon className="h-12 w-12 text-muted-foreground" />
