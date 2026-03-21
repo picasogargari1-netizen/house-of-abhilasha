@@ -44,8 +44,8 @@ const AdminCategoriesTab = () => {
   const fetchData = async () => {
     setLoading(true);
     const [catRes, subRes] = await Promise.all([
-      supabase.from("product_categories").select("*").order("display_order"),
-      supabase.from("product_subcategories").select("*").order("display_order"),
+      supabase.from("product_categories").select("id, name, slug, display_order").order("display_order"),
+      supabase.from("product_subcategories").select("id, category_id, name, slug, display_order").order("display_order"),
     ]);
     if (catRes.data) setCategories(catRes.data);
     if (subRes.data) setSubCategories(subRes.data);

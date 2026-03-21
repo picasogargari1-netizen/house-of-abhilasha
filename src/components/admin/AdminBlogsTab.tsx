@@ -33,7 +33,7 @@ const useBlogs = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blogs")
-        .select("*")
+        .select("id, title, body, image_url1, image_url2, image_url3, image_url4, image_url5, is_published, created_at, updated_at")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return (data || []) as Blog[];

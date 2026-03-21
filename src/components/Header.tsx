@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Menu, X, ChevronDown, User, LogOut, Settings } from "lucide-react";
 import {
@@ -12,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCart } from "@/contexts/CartContext";
-import { supabase } from "@/integrations/supabase/client";
+import { useCategories } from "@/hooks/useCategories";
 import AnnouncementBar from "./AnnouncementBar";
 
 interface HeaderProps {
@@ -25,20 +24,9 @@ const Header = ({ onNavigate }: HeaderProps) => {
   const { user, signOut } = useAuth();
   const { totalItems } = useCart();
 
-  const { data: dynamicCategories } = useQuery({
-    queryKey: ["navCategories"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("product_categories")
-        .select("*")
-        .order("display_order", { ascending: true });
-      if (error) throw error;
-      return (data || []).map((cat: any) => ({ name: cat.name, slug: cat.slug }));
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: dynamicCategories } = useCategories();
 
-  const clothingCategories = dynamicCategories || [];
+  const clothingCategories = (dynamicCategories || []).map((cat) => ({ name: cat.name, slug: cat.slug }));
 
   const handleSignOut = async () => {
     await signOut();

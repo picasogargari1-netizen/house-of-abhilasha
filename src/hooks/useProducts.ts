@@ -31,7 +31,7 @@ const convertGoogleDriveUrl = (url: string): string => {
 const fetchAllProducts = async (): Promise<Product[]> => {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("id, name, description, short_description, price, discounted_price, category, sub_category, image_url1, image_url2, image_url3, in_stock, featured, is_available, source, is_best_seller, is_product_of_day, is_new_arrival, external_id, created_at")
     .eq("is_available", true);
 
   if (error) {

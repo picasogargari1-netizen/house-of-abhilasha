@@ -16,12 +16,14 @@ const BlogsPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blogs")
-        .select("*")
+        .select("id, title, body, image_url1, is_published, created_at")
         .eq("is_published", true)
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data || [];
     },
+    staleTime: 10 * 60 * 1000,
+    gcTime: 20 * 60 * 1000,
   });
 
   const handleNavigate = (section: string) => {

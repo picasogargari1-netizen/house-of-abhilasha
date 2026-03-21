@@ -23,7 +23,7 @@ const BestSellers = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*")
+        .select("id, name, price, discounted_price, image_url1, image_url2, image_url3")
         .eq("is_best_seller", true)
         .eq("is_available", true)
         .limit(4);
@@ -42,6 +42,8 @@ const BestSellers = () => {
         };
       });
     },
+    staleTime: 15 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 
   const handleAddToCart = (e: React.MouseEvent, product: any) => {

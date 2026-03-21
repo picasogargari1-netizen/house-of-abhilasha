@@ -17,7 +17,7 @@ const useAnnouncements = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("announcements")
-        .select("*")
+        .select("id, message, is_active, display_order")
         .order("display_order", { ascending: true });
       if (error) throw error;
       return data || [];

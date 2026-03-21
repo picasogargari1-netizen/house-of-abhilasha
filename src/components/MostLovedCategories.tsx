@@ -1,33 +1,10 @@
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { proxyImageUrl } from "@/lib/utils";
+import { useCategories } from "@/hooks/useCategories";
 
 const MostLovedCategories = () => {
-  const { data: categories, isLoading } = useQuery({
-    queryKey: ["mostLovedCategories"],
-    queryFn: async () => {
-      const [catRes, imgRes] = await Promise.all([
-        supabase.from("product_categories").select("*").order("display_order", { ascending: true }),
-        supabase.from("category_images").select("*"),
-      ]);
-
-      if (catRes.error) throw catRes.error;
-      const cats = catRes.data || [];
-      const images = imgRes.data || [];
-
-      const imageMap = new Map(images.map((img: any) => [img.category_slug, img.image_url]));
-
-      return cats.map((cat: any) => ({
-        id: cat.id,
-        name: cat.name,
-        slug: cat.slug,
-        image_url: imageMap.get(cat.slug) || null,
-      }));
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: categories, isLoading } = useCategories();
 
   if (isLoading) {
     return (

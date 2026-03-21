@@ -19,7 +19,7 @@ const useBanners = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("banners")
-        .select("*")
+        .select("id, title, image_url, link, button_text, is_active, display_order")
         .order("display_order", { ascending: true });
       if (error) throw error;
       return data || [];

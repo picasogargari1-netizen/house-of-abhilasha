@@ -19,7 +19,7 @@ const ProductOfTheDay = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("products")
-        .select("*")
+        .select("id, name, short_description, description, price, discounted_price, image_url1")
         .eq("is_product_of_day", true)
         .eq("is_available", true)
         .limit(1)
@@ -36,6 +36,8 @@ const ProductOfTheDay = () => {
         image,
       };
     },
+    staleTime: 60 * 60 * 1000,
+    gcTime: 2 * 60 * 60 * 1000,
   });
 
   if (isLoading) {

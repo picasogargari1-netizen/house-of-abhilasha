@@ -15,8 +15,8 @@ const useCategoryImagesWithSync = () => {
     queryKey: ["adminCategoryImages"],
     queryFn: async () => {
       const [catRes, imgRes] = await Promise.all([
-        supabase.from("product_categories").select("*").order("display_order", { ascending: true }),
-        supabase.from("category_images").select("*"),
+        supabase.from("product_categories").select("id, name, slug, display_order").order("display_order", { ascending: true }),
+        supabase.from("category_images").select("id, category_slug, category_name, image_url"),
       ]);
 
       if (catRes.error) throw catRes.error;
@@ -33,7 +33,7 @@ const useCategoryImagesWithSync = () => {
             category_slug: cat.slug,
           }))
         );
-        const { data: refreshed } = await supabase.from("category_images").select("*");
+        const { data: refreshed } = await supabase.from("category_images").select("id, category_slug, category_name, image_url");
         const refreshedMap = new Map((refreshed || []).map((img: any) => [img.category_slug, img]));
         return cats.map((cat: any) => refreshedMap.get(cat.slug) || { id: cat.id, category_name: cat.name, category_slug: cat.slug, image_url: null });
       }

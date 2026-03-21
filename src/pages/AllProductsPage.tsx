@@ -3,9 +3,9 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCategories } from "@/hooks/useCategories";
+import { proxyImageUrl } from "@/lib/utils";
 
 const descriptions: Record<string, string> = {
   "co-ords": "Matching sets for effortless style",
@@ -19,29 +19,13 @@ const descriptions: Record<string, string> = {
 const AllProductsPage = () => {
   const navigate = useNavigate();
 
-  const { data: categories = [], isLoading } = useQuery({
-    queryKey: ["allProductsCategories"],
-    queryFn: async () => {
-      const [catRes, imgRes] = await Promise.all([
-        supabase.from("product_categories").select("*").order("display_order", { ascending: true }),
-        supabase.from("category_images").select("*"),
-      ]);
-
-      if (catRes.error) throw catRes.error;
-      const cats = catRes.data || [];
-      const images = imgRes.data || [];
-
-      const imageMap = new Map(images.map((img: any) => [img.category_slug, img.image_url]));
-
-      return cats.map((cat: any) => ({
-        id: cat.id,
-        category_name: cat.name,
-        category_slug: cat.slug,
-        image_url: imageMap.get(cat.slug) || null,
-      }));
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data: rawCategories = [], isLoading } = useCategories();
+  const categories = rawCategories.map((cat) => ({
+    id: cat.id,
+    category_name: cat.name,
+    category_slug: cat.slug,
+    image_url: cat.image_url,
+  }));
 
   const handleNavigate = (section: string) => {
     if (section === "home") {
@@ -102,7 +86,7 @@ const AllProductsPage = () => {
                   >
                     <div
                       className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
-                      style={{ backgroundImage: `url('${cat.image_url}')` }}
+                      style={{ backgroundImage: `url('${proxyImageUrl(cat.image_url || "")}')` }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-transparent group-hover:from-foreground/90 transition-colors" />
                     <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">

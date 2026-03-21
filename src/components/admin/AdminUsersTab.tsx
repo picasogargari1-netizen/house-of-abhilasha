@@ -42,7 +42,7 @@ const AdminUsersTab = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("newsletter_subscribers")
-        .select("*")
+        .select("id, email, created_at")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data || [];

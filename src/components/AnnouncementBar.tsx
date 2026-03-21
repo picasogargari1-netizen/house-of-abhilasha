@@ -17,6 +17,8 @@ const AnnouncementBar = () => {
       if (error) throw error;
       return data?.map((a) => a.message) || [];
     },
+    staleTime: 30 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
   });
 
   const messages = announcements?.length ? announcements : [];

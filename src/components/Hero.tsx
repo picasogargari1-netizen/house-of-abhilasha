@@ -14,13 +14,15 @@ const Hero = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("banners")
-        .select("*")
+        .select("id, image_url, link, button_text, display_order")
         .eq("is_active", true)
         .order("display_order", { ascending: true })
         .limit(6);
       if (error) throw error;
       return data || [];
     },
+    staleTime: 15 * 60 * 1000,
+    gcTime: 30 * 60 * 1000,
   });
 
   const slides = (banners || []).map((b) => ({

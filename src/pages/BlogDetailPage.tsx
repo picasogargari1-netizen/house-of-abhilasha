@@ -17,7 +17,7 @@ const BlogDetailPage = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("blogs")
-        .select("*")
+        .select("id, title, body, image_url1, image_url2, image_url3, image_url4, image_url5, is_published, created_at, updated_at")
         .eq("id", id!)
         .eq("is_published", true)
         .single();
