@@ -35,24 +35,42 @@ const isTouchDevice = () =>
 
 const FLOAT_CLASSES = ["card-float", "card-float-2", "card-float-3", "card-float-4"];
 
-const getIkVideoThumbnail = (videoUrl: string): string => {
-  if (!videoUrl || !videoUrl.includes("ik.imagekit.io")) return "";
-  const base = videoUrl.split("?")[0];
-  return `${base}/ik-thumbnail.jpg`;
-};
-
 const VideoCard = ({ video }: { video: Testimonial }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasError, setHasError] = useState(false);
+  const [thumbnail, setThumbnail] = useState<string | null>(null);
 
-  const poster = getIkVideoThumbnail(video.video_url || "");
+  const captureThumbnail = () => {
+    const vid = videoRef.current;
+    const canvas = canvasRef.current;
+    if (!vid || !canvas) return;
+    try {
+      canvas.width = vid.videoWidth || 360;
+      canvas.height = vid.videoHeight || 640;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(vid, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+      if (dataUrl && dataUrl.length > 100) setThumbnail(dataUrl);
+    } catch {
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) videoRef.current.currentTime = 0.1;
+  };
+
+  const handleSeeked = () => {
+    if (!isPlaying) captureThumbnail();
+  };
 
   const handlePlayPause = async () => {
     if (!videoRef.current) return;
     if (isPlaying) {
       videoRef.current.pause();
     } else {
+      setThumbnail(null);
       try {
         await videoRef.current.play();
       } catch {
@@ -62,7 +80,8 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
   };
 
   return (
-    <div className="group relative rounded-2xl overflow-hidden shadow-md bg-gray-900 aspect-[9/16] max-h-80 w-full"
+    <div
+      className="group relative rounded-2xl overflow-hidden shadow-md bg-gray-900 aspect-[9/16] max-h-80 w-full"
       style={{
         boxShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -77,23 +96,35 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)";
       }}
     >
+      <canvas ref={canvasRef} className="hidden" />
+
       {!hasError ? (
         <video
           ref={videoRef}
           src={video.video_url!}
-          poster={poster || undefined}
           className="w-full h-full object-cover"
+          onLoadedMetadata={handleLoadedMetadata}
+          onSeeked={handleSeeked}
           onEnded={() => setIsPlaying(false)}
           onPause={() => setIsPlaying(false)}
           onPlay={() => setIsPlaying(true)}
           onError={() => setHasError(true)}
           playsInline
-          preload="none"
+          preload="metadata"
+          crossOrigin="anonymous"
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-800">
           <p className="text-white/50 text-xs text-center px-2">Video unavailable</p>
         </div>
+      )}
+
+      {thumbnail && !isPlaying && (
+        <img
+          src={thumbnail}
+          alt="Video thumbnail"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        />
       )}
 
       {!hasError && (
@@ -104,7 +135,8 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {!isPlaying && (
-            <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg"
+            <div
+              className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg"
               style={{ boxShadow: "0 4px 20px rgba(255,215,80,0.3), 0 2px 8px rgba(0,0,0,0.2)" }}
             >
               <svg className="w-6 h-6 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
