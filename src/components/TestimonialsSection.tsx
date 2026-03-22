@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { proxyImageUrl } from "@/lib/utils";
+import { proxyImageUrl, getVideoSrc } from "@/lib/utils";
 import { User, Quote } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -103,7 +103,7 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     >
       <video
         ref={videoRef}
-        src={video.video_url!}
+        src={getVideoSrc(video.video_url)}
         className="w-full h-full object-cover"
         onLoadedMetadata={handleLoadedMetadata}
         onSeeked={handleSeeked}
