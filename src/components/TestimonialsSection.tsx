@@ -38,10 +38,10 @@ const FLOAT_CLASSES = ["card-float", "card-float-2", "card-float-3", "card-float
 const VideoCard = ({ video }: { video: Testimonial }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const srcAssignedRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [playFailed, setPlayFailed] = useState(false);
   const [hasThumbnail, setHasThumbnail] = useState(false);
-  // On touch devices skip preload entirely — avoids mobile network errors
   const [isTouch] = useState(() => isTouchDevice());
 
   const captureThumbnail = () => {
@@ -59,7 +59,6 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     }
   };
 
-  // Desktop only: seek to first frame once metadata is ready
   const handleLoadedMetadata = () => {
     if (!isTouch && videoRef.current) videoRef.current.currentTime = 0.1;
   };
@@ -75,9 +74,14 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     } else {
       setHasThumbnail(false);
       if (isTouch) {
-        // iOS/WebKit requires an explicit load() call when preload="none"
-        // before play() will succeed — must stay within the same user gesture
-        videoRef.current.load();
+        // iOS WebKit fix: assign src directly on the DOM element within the
+        // user gesture — never set it in JSX for touch devices.
+        // Setting src this way + immediately calling play() is the only pattern
+        // that reliably works on iOS Chrome and Safari.
+        if (!srcAssignedRef.current && video.video_url) {
+          videoRef.current.src = video.video_url;
+          srcAssignedRef.current = true;
+        }
       } else {
         videoRef.current.currentTime = 0;
       }
@@ -110,7 +114,7 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     >
       <video
         ref={videoRef}
-        src={video.video_url!}
+        {...(!isTouch && { src: video.video_url! })}
         className="w-full h-full object-cover"
         onLoadedMetadata={handleLoadedMetadata}
         onSeeked={handleSeeked}
