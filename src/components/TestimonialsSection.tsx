@@ -74,7 +74,13 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
       videoRef.current.pause();
     } else {
       setHasThumbnail(false);
-      if (!isTouch) videoRef.current.currentTime = 0;
+      if (isTouch) {
+        // iOS/WebKit requires an explicit load() call when preload="none"
+        // before play() will succeed — must stay within the same user gesture
+        videoRef.current.load();
+      } else {
+        videoRef.current.currentTime = 0;
+      }
       try {
         await videoRef.current.play();
       } catch {
