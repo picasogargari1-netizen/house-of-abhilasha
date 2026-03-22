@@ -67,17 +67,17 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     if (!isTouch && !isPlaying) captureThumbnail();
   };
 
-  const handlePlayPause = async () => {
+  const handlePlayPause = () => {
     if (!videoRef.current) return;
     if (isPlaying) {
       videoRef.current.pause();
     } else {
       setHasThumbnail(false);
       if (isTouch) {
-        // iOS WebKit fix: assign src directly on the DOM element within the
-        // user gesture — never set it in JSX for touch devices.
-        // Setting src this way + immediately calling play() is the only pattern
-        // that reliably works on iOS Chrome and Safari.
+        // iOS Chrome fix: the handler must be a plain (non-async) function so
+        // Chrome treats the entire call as a synchronous user gesture.
+        // We also assign src directly on the DOM — not via React state/props —
+        // so the assignment happens within the same synchronous gesture frame.
         if (!srcAssignedRef.current && video.video_url) {
           videoRef.current.src = video.video_url;
           srcAssignedRef.current = true;
@@ -85,12 +85,10 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
       } else {
         videoRef.current.currentTime = 0;
       }
-      try {
-        await videoRef.current.play();
-      } catch {
+      videoRef.current.play().catch(() => {
         setIsPlaying(false);
         setPlayFailed(true);
-      }
+      });
     }
   };
 
