@@ -121,7 +121,7 @@ const PhotoCard = ({ testimonial, index }: { testimonial: Testimonial; index: nu
   return (
     <div
       ref={cardRef}
-      className={`tilt-card bg-white rounded-2xl p-6 flex flex-col items-center text-center gap-4 relative ${floatClass}`}
+      className={`tilt-card bg-white rounded-2xl p-3 sm:p-6 flex flex-col items-center text-center gap-2 sm:gap-4 relative ${floatClass}`}
       style={{
         boxShadow: tilting
           ? "0 20px 48px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.08)"
@@ -135,24 +135,24 @@ const PhotoCard = ({ testimonial, index }: { testimonial: Testimonial; index: nu
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      <Quote className="absolute top-4 right-4 h-6 w-6 text-primary/20" />
+      <Quote className="absolute top-2 right-2 sm:top-4 sm:right-4 h-4 w-4 sm:h-6 sm:w-6 text-primary/20" />
       {testimonial.customer_photo_url ? (
         <img
           src={proxyImageUrl(testimonial.customer_photo_url)}
           alt={testimonial.customer_name}
-          className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
+          className="w-10 h-10 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-primary/20"
           style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.12), inset 0 0 0 2px rgba(255,255,255,0.6)" }}
         />
       ) : (
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"
+        <div className="w-10 h-10 sm:w-16 sm:h-16 rounded-full bg-primary/10 flex items-center justify-center"
           style={{ boxShadow: "inset 0 2px 6px rgba(0,0,0,0.08)" }}
         >
-          <User className="h-8 w-8 text-primary/50" />
+          <User className="h-5 w-5 sm:h-8 sm:w-8 text-primary/50" />
         </div>
       )}
       <div>
-        <p className="text-gray-700 text-sm leading-relaxed italic">"{testimonial.feedback_text}"</p>
-        <p className="mt-3 font-semibold text-gray-900 text-sm">— {testimonial.customer_name}</p>
+        <p className="text-gray-700 text-xs sm:text-sm leading-relaxed italic line-clamp-4">"{testimonial.feedback_text}"</p>
+        <p className="mt-1 sm:mt-3 font-semibold text-gray-900 text-xs sm:text-sm">— {testimonial.customer_name}</p>
       </div>
     </div>
   );
@@ -168,9 +168,9 @@ const TestimonialsSection = () => {
   if (!hasVideos && !hasPhotos) return null;
 
   return (
-    <section className="py-16 bg-gradient-to-b from-white to-[#fdf6ef]">
+    <section className="py-10 sm:py-16 bg-gradient-to-b from-white to-[#fdf6ef]">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div className="text-center mb-7 sm:mb-12">
           <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-3 heading-3d">
             What Our Customers Say About Us
           </h2>
@@ -203,7 +203,7 @@ const TestimonialsSection = () => {
         )}
 
         {hasPhotos && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 max-w-6xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-5 max-w-6xl mx-auto">
             {photos!.map((p, i) => (
               <PhotoCard key={p.id} testimonial={p} index={i} />
             ))}
