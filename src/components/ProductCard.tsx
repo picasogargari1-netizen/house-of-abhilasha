@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,10 +26,31 @@ interface ProductCardProps {
   product: Product;
 }
 
+const isTouchDevice = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia("(hover: none)").matches;
+
 const ProductCard = ({ product }: ProductCardProps) => {
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [tilting, setTilting] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { addToCart } = useCart();
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isTouchDevice() || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const cx = (e.clientX - rect.left) / rect.width - 0.5;
+    const cy = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: cy * 10, y: cx * -10 });
+    setTilting(true);
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+    setTilting(false);
+  };
 
   const handleWhatsAppOrder = () => {
     const displayPrice = product.discountedPrice ?? product.price;
@@ -54,10 +75,26 @@ const ProductCard = ({ product }: ProductCardProps) => {
     navigate(`/product/${product.id}`);
   };
 
+  const tiltStyle: React.CSSProperties = isTouchDevice()
+    ? {}
+    : {
+        transform: `perspective(900px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(${tilting ? 6 : 0}px)`,
+        transition: tilting
+          ? "transform 0.08s ease-out"
+          : "transform 0.45s ease-out",
+        boxShadow: tilting
+          ? "0 20px 40px rgba(0,0,0,0.18), 0 8px 16px rgba(0,0,0,0.12)"
+          : "0 2px 8px rgba(0,0,0,0.06)",
+      };
+
   return (
     <>
-      <div 
-        className="group bg-card rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+      <div
+        ref={cardRef}
+        className="tilt-card group bg-card rounded-lg overflow-hidden cursor-pointer"
+        style={tiltStyle}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
         onClick={handleProductClick}
       >
         {/* Image Container */}
@@ -65,13 +102,21 @@ const ProductCard = ({ product }: ProductCardProps) => {
           <img
             src={proxyImageUrl(product.image)}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          {/* Subtle top-left 3D shine */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%)",
+            }}
           />
           <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors hidden sm:flex items-center justify-center gap-2">
             <Button
               variant="secondary"
               size="sm"
-              className="opacity-0 group-hover:opacity-100 transition-opacity gap-2"
+              className="opacity-0 group-hover:opacity-100 transition-opacity gap-2 btn-shimmer-outline"
               onClick={(e) => {
                 e.stopPropagation();
                 setIsQuickViewOpen(true);
@@ -98,18 +143,24 @@ const ProductCard = ({ product }: ProductCardProps) => {
             <div className="flex items-center gap-1.5">
               {product.discountedPrice ? (
                 <>
-                  <p className="text-base sm:text-lg font-bold text-primary">₹{product.discountedPrice}</p>
-                  <p className="text-xs sm:text-sm text-muted-foreground line-through">₹{product.price}</p>
+                  <p className="text-base sm:text-lg font-bold text-primary">
+                    ₹{product.discountedPrice}
+                  </p>
+                  <p className="text-xs sm:text-sm text-muted-foreground line-through">
+                    ₹{product.price}
+                  </p>
                 </>
               ) : (
-                <p className="text-base sm:text-lg font-bold text-primary">₹{product.price}</p>
+                <p className="text-base sm:text-lg font-bold text-primary">
+                  ₹{product.price}
+                </p>
               )}
             </div>
             <Button
               variant="outline"
               size="sm"
               onClick={handleAddToCart}
-              className="gap-1 text-xs sm:text-sm px-2 sm:px-3"
+              className="gap-1 text-xs sm:text-sm px-2 sm:px-3 btn-shimmer-outline"
             >
               <ShoppingCart className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               <span className="hidden sm:inline">Add</span>
@@ -138,19 +189,32 @@ const ProductCard = ({ product }: ProductCardProps) => {
               <div className="mb-6">
                 {product.discountedPrice ? (
                   <div className="flex items-center gap-2">
-                    <p className="text-2xl font-bold text-primary">₹{product.discountedPrice}</p>
-                    <p className="text-lg text-muted-foreground line-through">₹{product.price}</p>
+                    <p className="text-2xl font-bold text-primary">
+                      ₹{product.discountedPrice}
+                    </p>
+                    <p className="text-lg text-muted-foreground line-through">
+                      ₹{product.price}
+                    </p>
                   </div>
                 ) : (
-                  <p className="text-2xl font-bold text-primary">₹{product.price}</p>
+                  <p className="text-2xl font-bold text-primary">
+                    ₹{product.price}
+                  </p>
                 )}
               </div>
               <div className="space-y-2 mt-auto">
-                <Button onClick={handleAddToCart} className="w-full gap-2">
+                <Button
+                  onClick={handleAddToCart}
+                  className="w-full gap-2 btn-gold-shimmer"
+                >
                   <ShoppingCart className="h-4 w-4" />
                   Add to Cart
                 </Button>
-                <Button variant="outline" onClick={handleWhatsAppOrder} className="w-full gap-2">
+                <Button
+                  variant="outline"
+                  onClick={handleWhatsAppOrder}
+                  className="w-full gap-2 btn-shimmer-outline"
+                >
                   <MessageCircle className="h-4 w-4" />
                   Order on WhatsApp
                 </Button>

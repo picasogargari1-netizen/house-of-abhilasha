@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, Menu, X, ChevronDown, User, LogOut, Settings } from "lucide-react";
@@ -20,6 +20,7 @@ interface HeaderProps {
 
 const Header = ({ onNavigate }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { totalItems } = useCart();
@@ -27,6 +28,12 @@ const Header = ({ onNavigate }: HeaderProps) => {
   const { data: dynamicCategories } = useCategories();
 
   const clothingCategories = (dynamicCategories || []).map((cat) => ({ name: cat.name, slug: cat.slug }));
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 10);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleSignOut = async () => {
     await signOut();
@@ -37,11 +44,15 @@ const Header = ({ onNavigate }: HeaderProps) => {
     <header className="fixed top-0 left-0 right-0 z-50">
       <AnnouncementBar />
 
-      {/* Main Navigation - Desktop */}
-      <div className="bg-background border-b border-border">
+      {/* Main Navigation */}
+      <div
+        className={`transition-all duration-300 ${
+          scrolled ? "glass-nav" : "bg-background border-b border-border"
+        }`}
+      >
         <div className="container mx-auto px-4">
+          {/* Desktop */}
           <div className="hidden md:flex items-center justify-between h-16">
-            {/* Logo - Left */}
             <h1
               className="text-2xl font-serif font-bold text-foreground cursor-pointer whitespace-nowrap brand-name"
               onClick={() => onNavigate("home")}
@@ -49,7 +60,6 @@ const Header = ({ onNavigate }: HeaderProps) => {
               House of Abhilasha
             </h1>
 
-            {/* Center Nav */}
             <nav className="flex items-center gap-8">
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors text-xs uppercase tracking-[0.12em] font-medium">
@@ -68,6 +78,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
+
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors text-xs uppercase tracking-[0.12em] font-medium">
                   Collection
@@ -89,6 +100,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-primary transition-colors text-xs uppercase tracking-[0.12em] font-medium">
                   About Us
@@ -103,6 +115,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+
               <Link
                 to="/blogs"
                 className="text-foreground hover:text-primary transition-colors text-xs uppercase tracking-[0.12em] font-medium"
@@ -111,7 +124,6 @@ const Header = ({ onNavigate }: HeaderProps) => {
               </Link>
             </nav>
 
-            {/* Right - Utility Icons */}
             <div className="flex items-center gap-4">
               {user ? (
                 <DropdownMenu>
@@ -194,7 +206,7 @@ const Header = ({ onNavigate }: HeaderProps) => {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-background border-t border-border max-h-[70vh] overflow-y-auto">
+        <div className="md:hidden bg-background/95 backdrop-blur-sm border-t border-border max-h-[70vh] overflow-y-auto">
           <div className="container mx-auto px-4 py-6">
             <nav className="flex flex-col gap-4">
               {user ? (

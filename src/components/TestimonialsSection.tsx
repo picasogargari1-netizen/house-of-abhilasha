@@ -30,6 +30,11 @@ const usePublicTestimonials = (type: "video" | "photo") =>
     },
   });
 
+const isTouchDevice = () =>
+  typeof window !== "undefined" && window.matchMedia("(hover: none)").matches;
+
+const FLOAT_CLASSES = ["card-float", "card-float-2", "card-float-3", "card-float-4"];
+
 const VideoCard = ({ video }: { video: Testimonial }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -45,7 +50,21 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
   };
 
   return (
-    <div className="group relative rounded-2xl overflow-hidden shadow-md bg-black aspect-[9/16] max-h-80 w-full">
+    <div className="group relative rounded-2xl overflow-hidden shadow-md bg-black aspect-[9/16] max-h-80 w-full"
+      style={{
+        boxShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)",
+        transition: "transform 0.3s ease, box-shadow 0.3s ease",
+      }}
+      onMouseEnter={(e) => {
+        if (isTouchDevice()) return;
+        (e.currentTarget as HTMLDivElement).style.transform = "perspective(600px) rotateY(-4deg) rotateX(2deg) scale(1.03)";
+        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.24), 0 4px 16px rgba(0,0,0,0.14)";
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLDivElement).style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)";
+        (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)";
+      }}
+    >
       <video
         ref={videoRef}
         src={video.video_url!}
@@ -56,21 +75,21 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
         playsInline
         preload="metadata"
       />
-      {/* Play/pause overlay */}
       <button
         onClick={handlePlayPause}
         className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors"
         aria-label={isPlaying ? "Pause" : "Play"}
       >
         {!isPlaying && (
-          <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+          <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg"
+            style={{ boxShadow: "0 4px 20px rgba(255,215,80,0.3), 0 2px 8px rgba(0,0,0,0.2)" }}
+          >
             <svg className="w-6 h-6 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
         )}
       </button>
-      {/* Customer name overlay */}
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-3">
         <p className="text-white text-sm font-medium">{video.customer_name}</p>
       </div>
@@ -78,26 +97,74 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
   );
 };
 
-const PhotoCard = ({ testimonial }: { testimonial: Testimonial }) => (
-  <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col items-center text-center gap-4 relative">
-    <Quote className="absolute top-4 right-4 h-6 w-6 text-primary/20" />
-    {testimonial.customer_photo_url ? (
-      <img
-        src={proxyImageUrl(testimonial.customer_photo_url)}
-        alt={testimonial.customer_name}
-        className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
+const PhotoCard = ({ testimonial, index }: { testimonial: Testimonial; index: number }) => {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [tilting, setTilting] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (isTouchDevice() || !cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const cx = (e.clientX - rect.left) / rect.width - 0.5;
+    const cy = (e.clientY - rect.top) / rect.height - 0.5;
+    setTilt({ x: cy * 8, y: cx * -8 });
+    setTilting(true);
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0 });
+    setTilting(false);
+  };
+
+  const floatClass = FLOAT_CLASSES[index % FLOAT_CLASSES.length];
+
+  return (
+    <div
+      ref={cardRef}
+      className={`tilt-card bg-white rounded-2xl p-6 flex flex-col items-center text-center gap-4 relative ${floatClass}`}
+      style={{
+        boxShadow: tilting
+          ? "0 20px 48px rgba(0,0,0,0.14), 0 4px 16px rgba(0,0,0,0.08)"
+          : "0 4px 20px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04)",
+        transform: `perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) translateZ(${tilting ? 8 : 0}px)`,
+        transition: tilting
+          ? "transform 0.08s ease-out, box-shadow 0.08s ease-out"
+          : "transform 0.45s ease-out, box-shadow 0.45s ease-out",
+        border: "1px solid rgba(0,0,0,0.06)",
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Shine highlight */}
+      <div
+        className="absolute inset-0 rounded-2xl pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.6) 0%, transparent 60%)",
+        }}
       />
-    ) : (
-      <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-        <User className="h-8 w-8 text-primary/50" />
+      <Quote className="absolute top-4 right-4 h-6 w-6 text-primary/20" />
+      {testimonial.customer_photo_url ? (
+        <img
+          src={proxyImageUrl(testimonial.customer_photo_url)}
+          alt={testimonial.customer_name}
+          className="w-16 h-16 rounded-full object-cover border-2 border-primary/20"
+          style={{ boxShadow: "0 4px 12px rgba(0,0,0,0.12), inset 0 0 0 2px rgba(255,255,255,0.6)" }}
+        />
+      ) : (
+        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"
+          style={{ boxShadow: "inset 0 2px 6px rgba(0,0,0,0.08)" }}
+        >
+          <User className="h-8 w-8 text-primary/50" />
+        </div>
+      )}
+      <div>
+        <p className="text-gray-700 text-sm leading-relaxed italic">"{testimonial.feedback_text}"</p>
+        <p className="mt-3 font-semibold text-gray-900 text-sm">— {testimonial.customer_name}</p>
       </div>
-    )}
-    <div>
-      <p className="text-gray-700 text-sm leading-relaxed italic">"{testimonial.feedback_text}"</p>
-      <p className="mt-3 font-semibold text-gray-900 text-sm">— {testimonial.customer_name}</p>
     </div>
-  </div>
-);
+  );
+};
 
 const TestimonialsSection = () => {
   const { data: videos } = usePublicTestimonials("video");
@@ -111,18 +178,18 @@ const TestimonialsSection = () => {
   return (
     <section className="py-16 bg-gradient-to-b from-white to-[#fdf6ef]">
       <div className="container mx-auto px-4">
-        {/* Heading */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-3">
+          <h2 className="text-3xl md:text-4xl font-serif font-bold text-gray-900 mb-3 heading-3d">
             What Our Customers Say About Us
           </h2>
           <p className="text-gray-500 text-sm md:text-base max-w-xl mx-auto">
             Real stories from our valued customers who love House of Abhilasha
           </p>
-          <div className="w-16 h-1 bg-primary rounded-full mx-auto mt-4" />
+          <div className="w-16 h-1 bg-primary rounded-full mx-auto mt-4"
+            style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}
+          />
         </div>
 
-        {/* Video testimonials */}
         {hasVideos && (
           <div className="mb-14">
             <div
@@ -143,11 +210,10 @@ const TestimonialsSection = () => {
           </div>
         )}
 
-        {/* Photo / text testimonials */}
         {hasPhotos && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 max-w-6xl mx-auto">
-            {photos!.map((p) => (
-              <PhotoCard key={p.id} testimonial={p} />
+            {photos!.map((p, i) => (
+              <PhotoCard key={p.id} testimonial={p} index={i} />
             ))}
           </div>
         )}

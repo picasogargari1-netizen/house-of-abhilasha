@@ -131,6 +131,184 @@ All colors MUST be HSL.
   }
 }
 
+/* ─── 3D & Animation Utilities ─────────────────────────────────────────── */
+
+@keyframes gold-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33%       { transform: translateY(-8px) rotate(0.5deg); }
+  66%       { transform: translateY(-4px) rotate(-0.5deg); }
+}
+
+@keyframes float-delayed {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+@keyframes particle-rise {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+}
+
+@keyframes shimmer-sweep {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(300%) skewX(-15deg); }
+}
+
+/* Glassmorphism navbar */
+.glass-nav {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08), 0 1px 0 rgba(255,255,255,0.6) inset;
+}
+
+/* 3D tilt card container */
+.tilt-card {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Gold shimmer button */
+.btn-gold-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    135deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--primary)) 100%
+  );
+  box-shadow: 0 2px 0 rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
+  transform: translateY(0);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-gold-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 215, 100, 0.4),
+    transparent
+  );
+  transform: translateX(-100%) skewX(-15deg);
+  transition: none;
+}
+.btn-gold-shimmer:hover::after {
+  animation: shimmer-sweep 0.65s ease forwards;
+}
+.btn-gold-shimmer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2), 0 8px 20px rgba(0,0,0,0.18);
+}
+.btn-gold-shimmer:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2), 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* Outline shimmer (for secondary buttons) */
+.btn-shimmer-outline {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.btn-shimmer-outline::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 215, 100, 0.25),
+    transparent
+  );
+  transform: translateX(-100%) skewX(-15deg);
+}
+.btn-shimmer-outline:hover::after {
+  animation: shimmer-sweep 0.65s ease forwards;
+}
+.btn-shimmer-outline:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+}
+
+/* 3D section heading text shadow */
+.heading-3d {
+  text-shadow:
+    1px 1px 0 rgba(180, 140, 60, 0.15),
+    2px 2px 0 rgba(180, 140, 60, 0.10),
+    3px 3px 0 rgba(180, 140, 60, 0.06),
+    4px 4px 8px rgba(0,0,0,0.08);
+}
+
+/* Floating card animation */
+.card-float {
+  animation: float 6s ease-in-out infinite;
+}
+.card-float-2 {
+  animation: float 7s ease-in-out 1s infinite;
+}
+.card-float-3 {
+  animation: float 8s ease-in-out 2s infinite;
+}
+.card-float-4 {
+  animation: float 6.5s ease-in-out 0.5s infinite;
+}
+
+/* Category orb 3D sphere highlight */
+.category-orb-inner {
+  position: relative;
+}
+.category-orb-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 32% 28%,
+    rgba(255,255,255,0.55) 0%,
+    rgba(255,255,255,0.18) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Gold particle */
+.gold-particle {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,215,80,0.7), rgba(200,160,30,0.3));
+  animation: particle-rise linear infinite;
+  pointer-events: none;
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .card-float, .card-float-2, .card-float-3, .card-float-4,
+  .btn-gold-shimmer::after, .btn-shimmer-outline::after,
+  .gold-particle {
+    animation: none !important;
+  }
+  .btn-gold-shimmer:hover,
+  .btn-shimmer-outline:hover {
+    transform: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
