@@ -25,6 +25,8 @@ const filterTabs: { key: FilterType; label: string }[] = [
   { key: "product_of_day", label: "Products of the Day" },
 ];
 
+const ALL_SIZES = ["XS", "S", "M", "L", "XL", "2XL", "3XL"];
+
 const emptyProduct = {
   name: "",
   description: "",
@@ -33,6 +35,7 @@ const emptyProduct = {
   discounted_price: "",
   category: "",
   sub_category: "",
+  available_sizes: [] as string[],
   image_url1: "",
   image_url2: "",
   image_url3: "",
@@ -120,6 +123,7 @@ const AdminProductsTab = () => {
         price: parseFloat(newProduct.price),
         category: newProduct.category,
         sub_category: newProduct.sub_category || null,
+        available_sizes: newProduct.available_sizes.length > 0 ? newProduct.available_sizes : null,
         discounted_price: newProduct.discounted_price ? parseFloat(newProduct.discounted_price) : null,
         image_url1: urls[0],
         image_url2: urls[1],
@@ -152,6 +156,7 @@ const AdminProductsTab = () => {
       discounted_price: product.discounted_price ? String(product.discounted_price) : "",
       category: product.category || "",
       sub_category: product.sub_category || "",
+      available_sizes: product.available_sizes || [],
       image_url1: product.image_url1 || "",
       image_url2: product.image_url2 || "",
       image_url3: product.image_url3 || "",
@@ -191,6 +196,7 @@ const AdminProductsTab = () => {
           price: parseFloat(editProduct.price),
           category: editProduct.category,
           sub_category: editProduct.sub_category || null,
+          available_sizes: editProduct.available_sizes.length > 0 ? editProduct.available_sizes : null,
           discounted_price: editProduct.discounted_price ? parseFloat(editProduct.discounted_price) : null,
           ...updatedUrls,
           in_stock: editProduct.in_stock,
@@ -284,6 +290,26 @@ const AdminProductsTab = () => {
               </Select>
             );
           })()}
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label>Available Sizes <span className="text-muted-foreground font-normal">(optional)</span></Label>
+        <div className="flex flex-wrap gap-x-5 gap-y-2 pt-1">
+          {ALL_SIZES.map((size) => (
+            <div key={size} className="flex items-center space-x-2">
+              <Checkbox
+                id={`${isEdit ? "edit" : "new"}_size_${size}`}
+                checked={product.available_sizes.includes(size)}
+                onCheckedChange={(checked) => {
+                  const updated = checked
+                    ? [...product.available_sizes, size]
+                    : product.available_sizes.filter((s) => s !== size);
+                  setProduct({ ...product, available_sizes: updated });
+                }}
+              />
+              <Label htmlFor={`${isEdit ? "edit" : "new"}_size_${size}`} className="font-normal">{size}</Label>
+            </div>
+          ))}
         </div>
       </div>
       <div className="space-y-2">

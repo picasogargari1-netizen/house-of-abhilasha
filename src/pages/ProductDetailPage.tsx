@@ -21,6 +21,7 @@ const ProductDetailPage = () => {
   const { data: product, isLoading, error } = useProduct(id || "");
   const { data: allProducts } = useProducts();
   const [quantity, setQuantity] = useState(1);
+  const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [deliverySettings, setDeliverySettings] = useState({ threshold: 999, fee: 99 });
 
   useEffect(() => {
@@ -69,7 +70,8 @@ const ProductDetailPage = () => {
   const handleWhatsAppOrder = () => {
     if (!product) return;
     const displayPrice = product.discountedPrice ?? product.price;
-    const message = `Hi! I'm interested in ordering: ${product.name} (₹${displayPrice}) - Quantity: ${quantity}`;
+    const sizeText = selectedSize ? ` - Size: ${selectedSize}` : "";
+    const message = `Hi! I'm interested in ordering: ${product.name}${sizeText} (₹${displayPrice}) - Quantity: ${quantity}`;
     window.open(
       `https://wa.me/918584049992?text=${encodeURIComponent(message)}`,
       "_blank"
@@ -203,6 +205,33 @@ const ProductDetailPage = () => {
                       )}
                     </div>
 
+                    {/* Size Selector */}
+                    {product.availableSizes && product.availableSizes.length > 0 && (
+                      <div>
+                        <span className="text-xs uppercase tracking-[0.12em] text-muted-foreground font-medium block mb-2">
+                          Size:
+                        </span>
+                        <div className="flex flex-wrap gap-2">
+                          {product.availableSizes.map((size) => (
+                            <button
+                              key={size}
+                              onClick={() => setSelectedSize(size)}
+                              className={`px-3.5 py-1.5 text-xs border font-medium uppercase tracking-wider transition-colors ${
+                                selectedSize === size
+                                  ? "border-foreground bg-foreground text-background"
+                                  : "border-border text-foreground hover:border-foreground"
+                              }`}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
+                        {!selectedSize && (
+                          <p className="text-xs text-muted-foreground mt-1.5">Please select a size</p>
+                        )}
+                      </div>
+                    )}
+
                     {/* Quantity Selector */}
                     <div>
                       <span className="text-xs uppercase tracking-[0.12em] text-muted-foreground font-medium block mb-2">
@@ -232,10 +261,14 @@ const ProductDetailPage = () => {
                     {/* Add to Cart */}
                     <button
                       onClick={async () => {
+                        if (product.availableSizes && product.availableSizes.length > 0 && !selectedSize) {
+                          toast({ title: "Please select a size", description: "Choose a size before adding to cart", variant: "destructive" });
+                          return;
+                        }
                         const cartPrice = product.discountedPrice ?? product.price;
                         await addToCart({
                           id: String(product.id),
-                          name: product.name,
+                          name: product.name + (selectedSize ? ` (${selectedSize})` : ""),
                           image: product.image,
                           price: cartPrice,
                         }, quantity);
