@@ -268,24 +268,7 @@ All colors MUST be HSL.
   animation: float 6.5s ease-in-out 0.5s infinite;
 }
 
-/* Category orb 3D sphere highlight */
-.category-orb-inner {
-  position: relative;
-}
-.category-orb-inner::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: radial-gradient(
-    circle at 32% 28%,
-    rgba(255,255,255,0.55) 0%,
-    rgba(255,255,255,0.18) 40%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: 1;
-}
+/* Category orb depth via shadow only — no overlay on image */
 
 /* Gold particle */
 .gold-particle {

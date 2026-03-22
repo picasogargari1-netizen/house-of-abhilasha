@@ -104,14 +104,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
-          {/* Subtle top-left 3D shine */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 50%)",
-            }}
-          />
           <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-colors hidden sm:flex items-center justify-center gap-2">
             <Button
               variant="secondary"

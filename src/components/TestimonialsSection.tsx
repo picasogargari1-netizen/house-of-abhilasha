@@ -135,14 +135,6 @@ const PhotoCard = ({ testimonial, index }: { testimonial: Testimonial; index: nu
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Shine highlight */}
-      <div
-        className="absolute inset-0 rounded-2xl pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle at 30% 20%, rgba(255,255,255,0.6) 0%, transparent 60%)",
-        }}
-      />
       <Quote className="absolute top-4 right-4 h-6 w-6 text-primary/20" />
       {testimonial.customer_photo_url ? (
         <img
