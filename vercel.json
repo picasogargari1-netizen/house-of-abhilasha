@@ -4,6 +4,6 @@
   "framework": "vite",
   "rewrites": [
     { "source": "/sb/:path(.*)", "destination": "https://oxvkxbygniwgcahmmeea.supabase.co/:path" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
