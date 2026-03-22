@@ -9,6 +9,7 @@ import BestSellers from "@/components/BestSellers";
 import MostLovedCategories from "@/components/MostLovedCategories";
 import ProductOfTheDay from "@/components/ProductOfTheDay";
 import NewsletterSection from "@/components/NewsletterSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
 import BrandStory from "@/components/BrandStory";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
@@ -76,6 +77,9 @@ const Index = () => {
       <div id="product-of-the-day">
         <ProductOfTheDay />
       </div>
+
+      {/* Testimonials */}
+      <TestimonialsSection />
 
       {/* Newsletter */}
       <NewsletterSection />

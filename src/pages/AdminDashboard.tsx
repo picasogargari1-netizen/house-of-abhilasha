@@ -4,7 +4,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useIsAdmin } from "@/hooks/useAdmin";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Shield, LogOut, Package, Users, ShoppingCart, BarChart3, Image, FileText, LayoutGrid } from "lucide-react";
+import { Shield, LogOut, Package, Users, ShoppingCart, BarChart3, Image, FileText, LayoutGrid, MessageSquareQuote } from "lucide-react";
 import AdminOrdersTab from "@/components/admin/AdminOrdersTab";
 import AdminUsersTab from "@/components/admin/AdminUsersTab";
 import AdminProductsTab from "@/components/admin/AdminProductsTab";
@@ -13,6 +13,7 @@ import AdminBannersTab from "@/components/admin/AdminBannersTab";
 import AdminCategoryImagesTab from "@/components/admin/AdminCategoryImagesTab";
 import AdminBlogsTab from "@/components/admin/AdminBlogsTab";
 import AdminCategoriesTab from "@/components/admin/AdminCategoriesTab";
+import AdminTestimonialsTab from "@/components/admin/AdminTestimonialsTab";
 
 const AdminDashboard = () => {
   const { user, signOut, loading } = useAuth();
@@ -73,7 +74,7 @@ const AdminDashboard = () => {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6">
         <Tabs defaultValue="orders" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 lg:w-auto lg:inline-grid">
+          <TabsList className="grid w-full grid-cols-8 lg:w-auto lg:inline-grid">
             <TabsTrigger value="orders" className="flex items-center gap-2">
               <ShoppingCart className="h-4 w-4" />
               <span className="hidden sm:inline">Orders</span>
@@ -97,6 +98,10 @@ const AdminDashboard = () => {
             <TabsTrigger value="blogs" className="flex items-center gap-2">
               <FileText className="h-4 w-4" />
               <span className="hidden sm:inline">Blogs</span>
+            </TabsTrigger>
+            <TabsTrigger value="testimonials" className="flex items-center gap-2">
+              <MessageSquareQuote className="h-4 w-4" />
+              <span className="hidden sm:inline">Testimonials</span>
             </TabsTrigger>
             <TabsTrigger value="analytics" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -131,6 +136,10 @@ const AdminDashboard = () => {
 
           <TabsContent value="blogs">
             <AdminBlogsTab />
+          </TabsContent>
+
+          <TabsContent value="testimonials">
+            <AdminTestimonialsTab />
           </TabsContent>
         </Tabs>
       </main>
