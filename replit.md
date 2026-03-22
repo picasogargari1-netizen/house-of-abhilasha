@@ -113,6 +113,14 @@ House of Abhilasha is an e-commerce platform for ethnic Indian clothing and jewe
 - **RLS Policies**: Apply `supabase/migrations/rls_policies.sql` in Supabase SQL editor
 
 ## Recent Changes
+- **2026-03-22**: Migrated from Replit Agent to Replit environment
+  - Installed npm dependencies (476 packages)
+  - Supabase backend stays on existing Supabase project (no migration needed — pure frontend SPA)
+  - Vite dev server runs on port 5000 via `npm run dev`
+  - Supabase API calls proxied through Vite dev proxy (`/supabase-proxy` for API, `/supabase-storage` for images)
+  - Added React Router v7 future flags to eliminate deprecation warnings
+  - Workflow "Start application" configured to run `npm run dev` on port 5000
+  - Deployment target: static SPA (Replit static deployment or Vercel)
 - **2026-02-24**: Supabase proxied through Vercel rewrites in production
   - `vercel.json` rewrites `/sb/:path*` to `https://oxvkxbygniwgcahmmeea.supabase.co/:path*`
   - Production Supabase client uses `window.location.origin + "/sb"` as base URL
