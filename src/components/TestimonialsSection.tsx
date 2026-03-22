@@ -59,11 +59,11 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
   };
 
   const handleLoadedMetadata = () => {
-    if (!isTouch && videoRef.current) videoRef.current.currentTime = 0.1;
+    if (videoRef.current) videoRef.current.currentTime = 0.1;
   };
 
   const handleSeeked = () => {
-    if (!isTouch && !isPlaying) captureThumbnail();
+    if (!isPlaying) captureThumbnail();
   };
 
   const handlePlayPause = () => {
@@ -74,11 +74,9 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     } else {
       setHasThumbnail(false);
       if (!isTouch) vid.currentTime = 0;
-      vid.play().catch((err: unknown) => {
-        const name = err instanceof Error ? err.name : String(err);
-        const msg = err instanceof Error ? err.message : "";
+      vid.play().catch(() => {
         setIsPlaying(false);
-        setPlayError(`${name}: ${msg}`);
+        setPlayError("Unable to play video");
       });
     }
   };
@@ -111,17 +109,16 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
         onPause={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
         playsInline
-        preload="none"
+        preload="metadata"
+        crossOrigin="anonymous"
       />
 
-      {/* Canvas thumbnail overlay — desktop only */}
-      {!isTouch && (
-        <canvas
-          ref={canvasRef}
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ display: hasThumbnail && !isPlaying ? "block" : "none" }}
-        />
-      )}
+      {/* Canvas thumbnail overlay — all devices */}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ display: hasThumbnail && !isPlaying ? "block" : "none" }}
+      />
 
       {/* Play / pause button */}
       {!playError ? (
@@ -143,8 +140,8 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
           )}
         </button>
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/60 p-3">
-          <p className="text-white/80 text-xs text-center break-all">{playError}</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+          <p className="text-white/70 text-xs text-center px-3">{playError}</p>
         </div>
       )}
 
