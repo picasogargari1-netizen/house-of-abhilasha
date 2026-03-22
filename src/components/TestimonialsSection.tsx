@@ -43,6 +43,10 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
   const [playFailed, setPlayFailed] = useState(false);
   const [hasThumbnail, setHasThumbnail] = useState(false);
   const [isTouch] = useState(() => isTouchDevice());
+  // touchSrc mirrors what we assign to the DOM on touch devices.
+  // Without this, React's reconciler would strip the src we set directly
+  // on the DOM element (since the JSX has no src for touch), aborting playback.
+  const [touchSrc, setTouchSrc] = useState<string | undefined>(undefined);
 
   const captureThumbnail = () => {
     const vid = videoRef.current;
@@ -74,13 +78,17 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     } else {
       setHasThumbnail(false);
       if (isTouch) {
-        // iOS Chrome fix: the handler must be a plain (non-async) function so
-        // Chrome treats the entire call as a synchronous user gesture.
-        // We also assign src directly on the DOM — not via React state/props —
-        // so the assignment happens within the same synchronous gesture frame.
         if (!srcAssignedRef.current && video.video_url) {
+          // 1. Assign src directly on the DOM so play() fires within the
+          //    synchronous user gesture frame — required by iOS Chrome.
           videoRef.current.src = video.video_url;
           srcAssignedRef.current = true;
+          // 2. Also update React state to the same URL so that when React
+          //    reconciles on the next render it sees src in the virtual DOM
+          //    and does NOT strip the attribute we just set. Without this
+          //    React removes the src (it's absent from our JSX for touch),
+          //    which aborts buffering on Chrome iOS (Edge is lenient; Chrome isn't).
+          setTouchSrc(video.video_url);
         }
       } else {
         videoRef.current.currentTime = 0;
@@ -112,7 +120,7 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     >
       <video
         ref={videoRef}
-        {...(!isTouch && { src: video.video_url! })}
+        src={isTouch ? touchSrc : video.video_url!}
         className="w-full h-full object-cover"
         onLoadedMetadata={handleLoadedMetadata}
         onSeeked={handleSeeked}
