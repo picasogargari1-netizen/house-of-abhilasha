@@ -40,19 +40,19 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [thumbnail, setThumbnail] = useState<string | null>(null);
+  const [hasThumbnail, setHasThumbnail] = useState(false);
 
   const captureThumbnail = () => {
     const vid = videoRef.current;
     const canvas = canvasRef.current;
     if (!vid || !canvas) return;
     try {
-      canvas.width = vid.videoWidth || 360;
-      canvas.height = vid.videoHeight || 640;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width || vid.videoWidth || 200;
+      canvas.height = rect.height || vid.videoHeight || 355;
       const ctx = canvas.getContext("2d");
       ctx?.drawImage(vid, 0, 0, canvas.width, canvas.height);
-      const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
-      if (dataUrl && dataUrl.length > 100) setThumbnail(dataUrl);
+      setHasThumbnail(true);
     } catch {
     }
   };
@@ -70,11 +70,13 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     if (isPlaying) {
       videoRef.current.pause();
     } else {
-      setThumbnail(null);
+      setHasThumbnail(false);
+      videoRef.current.currentTime = 0;
       try {
         await videoRef.current.play();
       } catch {
         setIsPlaying(false);
+        setHasThumbnail(true);
       }
     }
   };
@@ -96,8 +98,6 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)";
       }}
     >
-      <canvas ref={canvasRef} className="hidden" />
-
       {!hasError ? (
         <video
           ref={videoRef}
@@ -111,7 +111,6 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
           onError={() => setHasError(true)}
           playsInline
           preload="metadata"
-          crossOrigin="anonymous"
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-gray-800">
@@ -119,13 +118,11 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
         </div>
       )}
 
-      {thumbnail && !isPlaying && (
-        <img
-          src={thumbnail}
-          alt="Video thumbnail"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        />
-      )}
+      <canvas
+        ref={canvasRef}
+        className="absolute inset-0 w-full h-full pointer-events-none"
+        style={{ display: hasThumbnail && !isPlaying ? "block" : "none" }}
+      />
 
       {!hasError && (
         <button
