@@ -38,15 +38,10 @@ const FLOAT_CLASSES = ["card-float", "card-float-2", "card-float-3", "card-float
 const VideoCard = ({ video }: { video: Testimonial }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const srcAssignedRef = useRef(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [playFailed, setPlayFailed] = useState(false);
+  const [playError, setPlayError] = useState<string | null>(null);
   const [hasThumbnail, setHasThumbnail] = useState(false);
   const [isTouch] = useState(() => isTouchDevice());
-  // touchSrc mirrors what we assign to the DOM on touch devices.
-  // Without this, React's reconciler would strip the src we set directly
-  // on the DOM element (since the JSX has no src for touch), aborting playback.
-  const [touchSrc, setTouchSrc] = useState<string | undefined>(undefined);
 
   const captureThumbnail = () => {
     const vid = videoRef.current;
@@ -72,30 +67,18 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
   };
 
   const handlePlayPause = () => {
-    if (!videoRef.current) return;
+    const vid = videoRef.current;
+    if (!vid) return;
     if (isPlaying) {
-      videoRef.current.pause();
+      vid.pause();
     } else {
       setHasThumbnail(false);
-      if (isTouch) {
-        if (!srcAssignedRef.current && video.video_url) {
-          // 1. Assign src directly on the DOM so play() fires within the
-          //    synchronous user gesture frame — required by iOS Chrome.
-          videoRef.current.src = video.video_url;
-          srcAssignedRef.current = true;
-          // 2. Also update React state to the same URL so that when React
-          //    reconciles on the next render it sees src in the virtual DOM
-          //    and does NOT strip the attribute we just set. Without this
-          //    React removes the src (it's absent from our JSX for touch),
-          //    which aborts buffering on Chrome iOS (Edge is lenient; Chrome isn't).
-          setTouchSrc(video.video_url);
-        }
-      } else {
-        videoRef.current.currentTime = 0;
-      }
-      videoRef.current.play().catch(() => {
+      if (!isTouch) vid.currentTime = 0;
+      vid.play().catch((err: unknown) => {
+        const name = err instanceof Error ? err.name : String(err);
+        const msg = err instanceof Error ? err.message : "";
         setIsPlaying(false);
-        setPlayFailed(true);
+        setPlayError(`${name}: ${msg}`);
       });
     }
   };
@@ -120,7 +103,7 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     >
       <video
         ref={videoRef}
-        src={isTouch ? touchSrc : video.video_url!}
+        src={video.video_url!}
         className="w-full h-full object-cover"
         onLoadedMetadata={handleLoadedMetadata}
         onSeeked={handleSeeked}
@@ -128,7 +111,7 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
         onPause={() => setIsPlaying(false)}
         onPlay={() => setIsPlaying(true)}
         playsInline
-        preload={isTouch ? "none" : "metadata"}
+        preload="none"
       />
 
       {/* Canvas thumbnail overlay — desktop only */}
@@ -141,7 +124,7 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
       )}
 
       {/* Play / pause button */}
-      {!playFailed ? (
+      {!playError ? (
         <button
           onClick={handlePlayPause}
           className="absolute inset-0 flex items-center justify-center transition-colors"
@@ -160,8 +143,8 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
           )}
         </button>
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-          <p className="text-white/70 text-xs text-center px-3">Unable to play video</p>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/60 p-3">
+          <p className="text-white/80 text-xs text-center break-all">{playError}</p>
         </div>
       )}
 
