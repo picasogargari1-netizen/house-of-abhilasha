@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useAdminProducts, useCreateProduct, useDeleteProduct, useUpdateProduct } from "@/hooks/useAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { proxyImageUrl } from "@/lib/utils";
+import { uploadToImageKit } from "@/lib/imagekit";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -78,11 +79,7 @@ const AdminProductsTab = () => {
   const isLoading = productsLoading;
 
   const uploadImage = async (file: File): Promise<string> => {
-    const fileName = `${Date.now()}-${file.name}`;
-    const { error } = await supabase.storage.from("product-images").upload(fileName, file);
-    if (error) throw error;
-    const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
-    return data.publicUrl;
+    return uploadToImageKit(file, "/products");
   };
 
   const handleImageSelect = (index: number, file: File | null, isEdit: boolean) => {

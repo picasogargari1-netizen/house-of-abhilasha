@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AdminAnnouncementsSection from "./AdminAnnouncementsSection";
 import { supabase } from "@/integrations/supabase/client";
 import { proxyImageUrl } from "@/lib/utils";
+import { uploadToImageKit } from "@/lib/imagekit";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,19 +58,13 @@ const AdminBannersTab = () => {
     }
     setUploading(true);
     try {
-      const fileName = `${Date.now()}-${selectedFile.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from("banners")
-        .upload(fileName, selectedFile);
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage.from("banners").getPublicUrl(fileName);
+      const imageUrl = await uploadToImageKit(selectedFile, "/banners");
 
       const nextOrder = (banners?.length || 0) + 1;
       const { error: insertError } = await supabase
         .from("banners")
         .insert({
-          image_url: urlData.publicUrl,
+          image_url: imageUrl,
           title: newBanner.title || null,
           link: newBanner.link || null,
           button_text: newBanner.button_text || "Shop Now",
@@ -102,13 +97,14 @@ const AdminBannersTab = () => {
   const deleteBanner = useMutation({
     mutationFn: async (id: string) => {
       const banner = banners?.find((b: any) => b.id === id);
-      if (banner) {
-        // Extract file name from URL and delete from storage
-        const url = new URL(banner.image_url);
-        const pathParts = url.pathname.split("/banners/");
-        if (pathParts[1]) {
-          await supabase.storage.from("banners").remove([decodeURIComponent(pathParts[1])]);
-        }
+      if (banner?.image_url && !banner.image_url.startsWith("https://ik.imagekit.io/")) {
+        try {
+          const url = new URL(banner.image_url);
+          const pathParts = url.pathname.split("/banners/");
+          if (pathParts[1]) {
+            await supabase.storage.from("banners").remove([decodeURIComponent(pathParts[1])]);
+          }
+        } catch {}
       }
       const { error } = await supabase.from("banners").delete().eq("id", id);
       if (error) throw error;
@@ -141,22 +137,17 @@ const AdminBannersTab = () => {
     try {
       let imageUrl = editingBanner.image_url;
 
-      // If a new file was selected, upload it and delete the old one
       if (editFile) {
-        const fileName = `${Date.now()}-${editFile.name}`;
-        const { error: uploadError } = await supabase.storage
-          .from("banners")
-          .upload(fileName, editFile);
-        if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage.from("banners").getPublicUrl(fileName);
-        imageUrl = urlData.publicUrl;
-
-        // Delete old file from storage
-        const oldUrl = new URL(editingBanner.image_url);
-        const pathParts = oldUrl.pathname.split("/banners/");
-        if (pathParts[1]) {
-          await supabase.storage.from("banners").remove([decodeURIComponent(pathParts[1])]);
+        imageUrl = await uploadToImageKit(editFile, "/banners");
+        // Only delete old file if it was stored in Supabase Storage (not ImageKit)
+        if (editingBanner.image_url && !editingBanner.image_url.startsWith("https://ik.imagekit.io/")) {
+          try {
+            const oldUrl = new URL(editingBanner.image_url);
+            const pathParts = oldUrl.pathname.split("/banners/");
+            if (pathParts[1]) {
+              await supabase.storage.from("banners").remove([decodeURIComponent(pathParts[1])]);
+            }
+          } catch {}
         }
       }
 

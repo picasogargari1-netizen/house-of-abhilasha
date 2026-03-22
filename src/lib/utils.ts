@@ -9,6 +9,8 @@ const SUPABASE_URL = "https://oxvkxbygniwgcahmmeea.supabase.co";
 
 export function proxyImageUrl(url: string): string {
   if (!url) return url;
+  // ImageKit URLs are already public CDN URLs — no proxy needed
+  if (url.startsWith("https://ik.imagekit.io/")) return url;
   if (import.meta.env.DEV) {
     if (url.startsWith(SUPABASE_URL + "/storage/")) {
       return url.replace(SUPABASE_URL + "/storage", "/supabase-storage");

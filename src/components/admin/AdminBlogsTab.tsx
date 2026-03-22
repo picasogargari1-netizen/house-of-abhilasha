@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { proxyImageUrl } from "@/lib/utils";
+import { uploadToImageKit } from "@/lib/imagekit";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,11 +43,7 @@ const useBlogs = () => {
 };
 
 const uploadBlogImage = async (file: File): Promise<string> => {
-  const fileName = `${Date.now()}-${file.name}`;
-  const { error } = await supabase.storage.from("blog-images").upload(fileName, file);
-  if (error) throw error;
-  const { data } = supabase.storage.from("blog-images").getPublicUrl(fileName);
-  return data.publicUrl;
+  return uploadToImageKit(file, "/blogs");
 };
 
 const AdminBlogsTab = () => {

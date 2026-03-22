@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { proxyImageUrl } from "@/lib/utils";
+import { uploadToImageKit } from "@/lib/imagekit";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,15 +76,10 @@ const AdminCategoryImagesTab = () => {
     }
     setUploading(true);
     try {
-      const fileName = `${editingCategory.category_slug}-${Date.now()}.${selectedFile.name.split('.').pop()}`;
-      const { error: uploadError } = await supabase.storage
-        .from("category-images")
-        .upload(fileName, selectedFile);
-      if (uploadError) throw uploadError;
+      const imageUrl = await uploadToImageKit(selectedFile, "/category-images");
 
-      const { data: urlData } = supabase.storage.from("category-images").getPublicUrl(fileName);
-
-      if (editingCategory.image_url) {
+      // Only delete old file if it was stored in Supabase Storage (not ImageKit)
+      if (editingCategory.image_url && !editingCategory.image_url.startsWith("https://ik.imagekit.io/")) {
         try {
           const oldUrl = new URL(editingCategory.image_url);
           const pathParts = oldUrl.pathname.split("/category-images/");
@@ -95,7 +91,7 @@ const AdminCategoryImagesTab = () => {
 
       const { error } = await supabase
         .from("category_images")
-        .update({ image_url: urlData.publicUrl })
+        .update({ image_url: imageUrl })
         .eq("id", editingCategory.id);
       if (error) throw error;
 
