@@ -39,8 +39,10 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [hasError, setHasError] = useState(false);
+  const [playFailed, setPlayFailed] = useState(false);
   const [hasThumbnail, setHasThumbnail] = useState(false);
+  // On touch devices skip preload entirely — avoids mobile network errors
+  const [isTouch] = useState(() => isTouchDevice());
 
   const captureThumbnail = () => {
     const vid = videoRef.current;
@@ -57,12 +59,13 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
     }
   };
 
+  // Desktop only: seek to first frame once metadata is ready
   const handleLoadedMetadata = () => {
-    if (videoRef.current) videoRef.current.currentTime = 0.1;
+    if (!isTouch && videoRef.current) videoRef.current.currentTime = 0.1;
   };
 
   const handleSeeked = () => {
-    if (!isPlaying) captureThumbnail();
+    if (!isTouch && !isPlaying) captureThumbnail();
   };
 
   const handlePlayPause = async () => {
@@ -71,12 +74,12 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
       videoRef.current.pause();
     } else {
       setHasThumbnail(false);
-      videoRef.current.currentTime = 0;
+      if (!isTouch) videoRef.current.currentTime = 0;
       try {
         await videoRef.current.play();
       } catch {
         setIsPlaying(false);
-        setHasThumbnail(true);
+        setPlayFailed(true);
       }
     }
   };
@@ -89,46 +92,44 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
       }}
       onMouseEnter={(e) => {
-        if (isTouchDevice()) return;
+        if (isTouch) return;
         (e.currentTarget as HTMLDivElement).style.transform = "perspective(600px) rotateY(-4deg) rotateX(2deg) scale(1.03)";
         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 16px 48px rgba(0,0,0,0.24), 0 4px 16px rgba(0,0,0,0.14)";
       }}
       onMouseLeave={(e) => {
+        if (isTouch) return;
         (e.currentTarget as HTMLDivElement).style.transform = "perspective(600px) rotateY(0deg) rotateX(0deg) scale(1)";
         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)";
       }}
     >
-      {!hasError ? (
-        <video
-          ref={videoRef}
-          src={video.video_url!}
-          className="w-full h-full object-cover"
-          onLoadedMetadata={handleLoadedMetadata}
-          onSeeked={handleSeeked}
-          onEnded={() => setIsPlaying(false)}
-          onPause={() => setIsPlaying(false)}
-          onPlay={() => setIsPlaying(true)}
-          onError={() => setHasError(true)}
-          playsInline
-          preload="metadata"
-        />
-      ) : (
-        <div className="w-full h-full flex items-center justify-center bg-gray-800">
-          <p className="text-white/50 text-xs text-center px-2">Video unavailable</p>
-        </div>
-      )}
-
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full pointer-events-none"
-        style={{ display: hasThumbnail && !isPlaying ? "block" : "none" }}
+      <video
+        ref={videoRef}
+        src={video.video_url!}
+        className="w-full h-full object-cover"
+        onLoadedMetadata={handleLoadedMetadata}
+        onSeeked={handleSeeked}
+        onEnded={() => setIsPlaying(false)}
+        onPause={() => setIsPlaying(false)}
+        onPlay={() => setIsPlaying(true)}
+        playsInline
+        preload={isTouch ? "none" : "metadata"}
       />
 
-      {!hasError && (
+      {/* Canvas thumbnail overlay — desktop only */}
+      {!isTouch && (
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ display: hasThumbnail && !isPlaying ? "block" : "none" }}
+        />
+      )}
+
+      {/* Play / pause button */}
+      {!playFailed ? (
         <button
           onClick={handlePlayPause}
           className="absolute inset-0 flex items-center justify-center transition-colors"
-          style={{ background: isPlaying ? "transparent" : "rgba(0,0,0,0.15)" }}
+          style={{ background: isPlaying ? "transparent" : "rgba(0,0,0,0.18)" }}
           aria-label={isPlaying ? "Pause" : "Play"}
         >
           {!isPlaying && (
@@ -142,6 +143,10 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
             </div>
           )}
         </button>
+      ) : (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50">
+          <p className="text-white/70 text-xs text-center px-3">Unable to play video</p>
+        </div>
       )}
 
       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-3 pointer-events-none">
