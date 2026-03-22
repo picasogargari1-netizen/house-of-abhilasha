@@ -35,22 +35,34 @@ const isTouchDevice = () =>
 
 const FLOAT_CLASSES = ["card-float", "card-float-2", "card-float-3", "card-float-4"];
 
+const getIkVideoThumbnail = (videoUrl: string): string => {
+  if (!videoUrl || !videoUrl.includes("ik.imagekit.io")) return "";
+  const base = videoUrl.split("?")[0];
+  return `${base}/ik-thumbnail.jpg`;
+};
+
 const VideoCard = ({ video }: { video: Testimonial }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
-  const handlePlayPause = () => {
+  const poster = getIkVideoThumbnail(video.video_url || "");
+
+  const handlePlayPause = async () => {
     if (!videoRef.current) return;
     if (isPlaying) {
       videoRef.current.pause();
     } else {
-      videoRef.current.play();
+      try {
+        await videoRef.current.play();
+      } catch {
+        setIsPlaying(false);
+      }
     }
-    setIsPlaying(!isPlaying);
   };
 
   return (
-    <div className="group relative rounded-2xl overflow-hidden shadow-md bg-black aspect-[9/16] max-h-80 w-full"
+    <div className="group relative rounded-2xl overflow-hidden shadow-md bg-gray-900 aspect-[9/16] max-h-80 w-full"
       style={{
         boxShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)",
         transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -65,32 +77,45 @@ const VideoCard = ({ video }: { video: Testimonial }) => {
         (e.currentTarget as HTMLDivElement).style.boxShadow = "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)";
       }}
     >
-      <video
-        ref={videoRef}
-        src={video.video_url!}
-        className="w-full h-full object-cover"
-        onEnded={() => setIsPlaying(false)}
-        onPause={() => setIsPlaying(false)}
-        onPlay={() => setIsPlaying(true)}
-        playsInline
-        preload="metadata"
-      />
-      <button
-        onClick={handlePlayPause}
-        className="absolute inset-0 flex items-center justify-center bg-black/20 hover:bg-black/30 transition-colors"
-        aria-label={isPlaying ? "Pause" : "Play"}
-      >
-        {!isPlaying && (
-          <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg"
-            style={{ boxShadow: "0 4px 20px rgba(255,215,80,0.3), 0 2px 8px rgba(0,0,0,0.2)" }}
-          >
-            <svg className="w-6 h-6 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z" />
-            </svg>
-          </div>
-        )}
-      </button>
-      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-3">
+      {!hasError ? (
+        <video
+          ref={videoRef}
+          src={video.video_url!}
+          poster={poster || undefined}
+          className="w-full h-full object-cover"
+          onEnded={() => setIsPlaying(false)}
+          onPause={() => setIsPlaying(false)}
+          onPlay={() => setIsPlaying(true)}
+          onError={() => setHasError(true)}
+          playsInline
+          preload="none"
+        />
+      ) : (
+        <div className="w-full h-full flex items-center justify-center bg-gray-800">
+          <p className="text-white/50 text-xs text-center px-2">Video unavailable</p>
+        </div>
+      )}
+
+      {!hasError && (
+        <button
+          onClick={handlePlayPause}
+          className="absolute inset-0 flex items-center justify-center transition-colors"
+          style={{ background: isPlaying ? "transparent" : "rgba(0,0,0,0.15)" }}
+          aria-label={isPlaying ? "Pause" : "Play"}
+        >
+          {!isPlaying && (
+            <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-lg"
+              style={{ boxShadow: "0 4px 20px rgba(255,215,80,0.3), 0 2px 8px rgba(0,0,0,0.2)" }}
+            >
+              <svg className="w-6 h-6 text-gray-800 ml-1" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </div>
+          )}
+        </button>
+      )}
+
+      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-3 py-3 pointer-events-none">
         <p className="text-white text-sm font-medium">{video.customer_name}</p>
       </div>
     </div>
