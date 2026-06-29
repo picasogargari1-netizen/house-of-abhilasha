@@ -2,6 +2,10 @@ import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getLocalCache, setLocalCache } from "@/lib/localCache";
+
+const CACHE_KEY = "hoa_announcements";
+const CACHE_TTL = 4 * 60 * 60 * 1000;
 
 const AnnouncementBar = () => {
   const [current, setCurrent] = useState(0);
@@ -9,16 +13,21 @@ const AnnouncementBar = () => {
   const { data: announcements } = useQuery({
     queryKey: ["announcements"],
     queryFn: async () => {
+      const cached = getLocalCache<string[]>(CACHE_KEY, CACHE_TTL);
+      if (cached) return cached;
+
       const { data, error } = await supabase
         .from("announcements")
         .select("message")
         .eq("is_active", true)
         .order("display_order", { ascending: true });
       if (error) throw error;
-      return data?.map((a) => a.message) || [];
+      const result = data?.map((a) => a.message) || [];
+      setLocalCache(CACHE_KEY, result);
+      return result;
     },
-    staleTime: 30 * 60 * 1000,
-    gcTime: 60 * 60 * 1000,
+    staleTime: 4 * 60 * 60 * 1000,
+    gcTime: 8 * 60 * 60 * 1000,
   });
 
   const messages = announcements?.length ? announcements : [];

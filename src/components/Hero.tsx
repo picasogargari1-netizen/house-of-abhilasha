@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { proxyImageUrl } from "@/lib/utils";
+import { getLocalCache, setLocalCache } from "@/lib/localCache";
 
 const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
   id: i,
@@ -19,9 +20,15 @@ const Hero = () => {
   const [current, setCurrent] = useState(0);
   const particles = useMemo(() => PARTICLES, []);
 
+  const BANNER_CACHE_KEY = "hoa_banners";
+  const BANNER_CACHE_TTL = 2 * 60 * 60 * 1000;
+
   const { data: banners, isLoading } = useQuery({
     queryKey: ["activeBanners"],
     queryFn: async () => {
+      const cached = getLocalCache<typeof banners>(BANNER_CACHE_KEY, BANNER_CACHE_TTL);
+      if (cached) return cached;
+
       const { data, error } = await supabase
         .from("banners")
         .select("id, image_url, link, button_text, display_order")
@@ -29,10 +36,12 @@ const Hero = () => {
         .order("display_order", { ascending: true })
         .limit(6);
       if (error) throw error;
-      return data || [];
+      const result = data || [];
+      setLocalCache(BANNER_CACHE_KEY, result);
+      return result;
     },
-    staleTime: 15 * 60 * 1000,
-    gcTime: 30 * 60 * 1000,
+    staleTime: 2 * 60 * 60 * 1000,
+    gcTime: 4 * 60 * 60 * 1000,
   });
 
   const slides = (banners || []).map((b) => ({
