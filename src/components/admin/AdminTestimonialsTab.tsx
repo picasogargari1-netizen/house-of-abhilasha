@@ -31,7 +31,7 @@ const useTestimonials = (type: "video" | "photo") =>
     queryFn: async () => {
       const { data, error } = await supabase
         .from("testimonials")
-        .select("*")
+        .select("id, testimonial_type, customer_name, customer_photo_url, feedback_text, video_url, display_order, is_active")
         .eq("testimonial_type", type)
         .order("display_order", { ascending: true });
       if (error) throw error;

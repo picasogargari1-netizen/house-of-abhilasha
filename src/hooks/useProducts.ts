@@ -68,7 +68,8 @@ export const useProducts = () => {
   return useQuery({
     queryKey: ["products"],
     queryFn: fetchAllProducts,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 30 * 60 * 1000,
+    gcTime: 2 * 60 * 60 * 1000,
   });
 };
 

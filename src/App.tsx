@@ -28,7 +28,15 @@ const TermsOfServicePage = lazy(() => import("./pages/TermsOfServicePage"));
 const RefundPolicyPage = lazy(() => import("./pages/RefundPolicyPage"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: false,
+      retry: 1,
+    },
+  },
+});
 
 const PageLoader = () => (
   <div className="min-h-screen bg-background flex items-center justify-center">
