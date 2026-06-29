@@ -15,18 +15,20 @@ const PARTICLES = Array.from({ length: 12 }, (_, i) => ({
   opacity: 0.25 + Math.random() * 0.35,
 }));
 
+type Banner = { id: number; image_url: string; link: string | null; button_text: string | null; display_order: number };
+
+const BANNER_CACHE_KEY = "hoa_banners";
+const BANNER_CACHE_TTL = 2 * 60 * 60 * 1000;
+
 const Hero = () => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
   const particles = useMemo(() => PARTICLES, []);
 
-  const BANNER_CACHE_KEY = "hoa_banners";
-  const BANNER_CACHE_TTL = 2 * 60 * 60 * 1000;
-
   const { data: banners, isLoading } = useQuery({
     queryKey: ["activeBanners"],
     queryFn: async () => {
-      const cached = getLocalCache<typeof banners>(BANNER_CACHE_KEY, BANNER_CACHE_TTL);
+      const cached = getLocalCache<Banner[]>(BANNER_CACHE_KEY, BANNER_CACHE_TTL);
       if (cached) return cached;
 
       const { data, error } = await supabase
