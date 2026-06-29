@@ -1,7 +1,8 @@
-modules = ["nodejs-20", "web", "python-3.11", "postgresql-16"]
+modules = ["nodejs-20", "web"]
 [agent]
 expertMode = true
 integrations = ["javascript_database:1.0.0", "github:1.0.0"]
+stack = "BEST_EFFORT_FALLBACK"
 
 [nix]
 channel = "stable-25_05"
@@ -50,6 +51,7 @@ externalPort = 3000
 VITE_SUPABASE_PROJECT_ID = "oxvkxbygniwgcahmmeea"
 VITE_SUPABASE_URL = "https://oxvkxbygniwgcahmmeea.supabase.co"
 VITE_SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94dmt4Ynlnbml3Z2NhaG1tZWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzIwODYsImV4cCI6MjA4NzAwODA4Nn0.m52n5x3o5TKXWIWuCGiU0DImYFlknLbMlt71j6ZbtzQ"
+VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94dmt4Ynlnbml3Z2NhaG1tZWVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE0MzIwODYsImV4cCI6MjA4NzAwODA4Nn0.m52n5x3o5TKXWIWuCGiU0DImYFlknLbMlt71j6ZbtzQ"
 
 [userenv.production]
 NODE_ENV = "production"
